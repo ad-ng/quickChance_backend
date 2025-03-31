@@ -26,3 +26,11 @@ model User {
   phoneNumber      String?
   createdAt        DateTime  @default(now())
 }
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  email     String?
+  password  String
+  createdAt DateTime @default(now())
+}
