@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int            @id @default(autoincrement())
+  username         String
+  email            String         @unique
+  isVerified       Boolean        @default(false)
+  password         String?
+  location         String?
+  preferences      String[]
+  dob              DateTime?
+  notification     Notification[]
+  verificationCode String?
+  phoneNumber      String?
+  createdAt        DateTime       @default(now())
+}
+
+model Admin {
+  id          Int           @id @default(autoincrement())
+  name        String        @unique
+  email       String?
+  password    String
+  opportunity Opportunity[]
+  createdAt   DateTime      @default(now())
+}
+
+model Opportunity {
+  id           Int               @id @default(autoincrement())
+  title        String
+  description  String
+  location     String?
+  deadline     DateTime?
+  adminId      Int
+  admin        Admin             @relation(fields: [adminId], references: [id])
+  notification Notification[]
+  categoryId   Int
+  category     Category          @relation(fields: [categoryId], references: [id])
+  status       OpportunityStatus
+  updatedAt    DateTime          @updatedAt
+  createdAt    DateTime          @default(now())
+}
+
+model Notification {
+  id            Int         @id @default(autoincrement())
+  opportunityId Int
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id])
+  userId        Int
+  user          User        @relation(fields: [userId], references: [id])
+  categoryId    Int
+  category      Category    @relation(fields: [categoryId], references: [id])
+  title         String
+  body          String
+  isRead        Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+}
+
+model Category {
+  id           Int            @id @default(autoincrement())
+  name         String
+  notification Notification[]
+  opportunity  Opportunity[]
+}
+
+enum OpportunityStatus {
+  active
+  expired
+  closed
+}
