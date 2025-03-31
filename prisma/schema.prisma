@@ -46,6 +46,8 @@ model Opportunity {
   adminId      Int
   admin        Admin             @relation(fields: [adminId], references: [id])
   notification Notification[]
+  categoryId   Int
+  category     Category          @relation(fields: [categoryId], references: [id])
   status       OpportunityStatus
   updatedAt    DateTime          @updatedAt
   createdAt    DateTime          @default(now())
@@ -57,10 +59,19 @@ model Notification {
   opportunity   Opportunity @relation(fields: [opportunityId], references: [id])
   userId        Int
   user          User        @relation(fields: [userId], references: [id])
+  categoryId    Int
+  category      Category    @relation(fields: [categoryId], references: [id])
   title         String
   body          String
   isRead        Boolean     @default(false)
   createdAt     DateTime    @default(now())
+}
+
+model Category {
+  id           Int            @id @default(autoincrement())
+  name         String
+  notification Notification[]
+  opportunity  Opportunity[]
 }
 
 enum OpportunityStatus {
