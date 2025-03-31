@@ -28,9 +28,29 @@ model User {
 }
 
 model Admin {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  email     String?
-  password  String
-  createdAt DateTime @default(now())
+  id          Int           @id @default(autoincrement())
+  name        String        @unique
+  email       String?
+  password    String
+  opportunity Opportunity[]
+  createdAt   DateTime      @default(now())
+}
+
+model Opportunity {
+  id          Int               @id @default(autoincrement())
+  title       String
+  description String
+  location    String?
+  deadline    DateTime?
+  adminId     Int
+  admin       Admin             @relation(fields: [adminId], references: [id])
+  status      OpportunityStatus
+  updatedAt   DateTime          @updatedAt
+  createdAt   DateTime          @default(now())
+}
+
+enum OpportunityStatus {
+  active
+  expired
+  closed
 }
