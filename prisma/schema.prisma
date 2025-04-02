@@ -18,7 +18,7 @@ model User {
   username         String
   email            String         @unique
   isVerified       Boolean        @default(false)
-  password         String?
+  password         String
   location         String?
   preferences      String[]
   dob              DateTime?
