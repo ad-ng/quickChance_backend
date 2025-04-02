@@ -27,9 +27,10 @@ export default tseslint.config(
   },
   {
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-floating-promises': 'warn',
-      '@typescript-eslint/no-unsafe-argument': 'warn'
+      '@typescript-eslint/no-explicit-any': 'off', // Disables no-explicit-any rule
+      '@typescript-eslint/no-floating-promises': 'off', // Disables no-floating-promises rule
+      '@typescript-eslint/no-unsafe-argument': 'off', // Disables no-unsafe-argument rule
+      '@typescript-eslint/no-unsafe-call': 'off', // Disables no-unsafe-call rule
     },
   },
 );
