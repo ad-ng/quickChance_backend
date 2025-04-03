@@ -11,7 +11,7 @@ export class AuthService {
     private jwt: JwtService,
   ) {}
 
-  async signup(dto: loginDTO) {
+  async signin(dto: loginDTO) {
     const { email, password } = dto;
 
     const currentUser = await this.prisma.user.findUnique({ where: { email } });
@@ -29,6 +29,12 @@ export class AuthService {
     return {
       token: await this.jwt.signAsync(currentUser),
       data: currentUser,
+    };
+  }
+
+  signup() {
+    return {
+      message: 'register !',
     };
   }
 }
