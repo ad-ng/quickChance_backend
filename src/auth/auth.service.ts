@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { loginDTO } from './dtos';
+import { loginDTO, RegisterDTO } from './dtos';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 
@@ -32,7 +32,7 @@ export class AuthService {
     };
   }
 
-  signup() {
+  signup(dto: RegisterDTO) {
     return {
       message: 'register !',
     };
