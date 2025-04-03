@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { loginDTO, RegisterDTO } from './dtos';
 import * as argon from 'argon2';
@@ -32,7 +36,15 @@ export class AuthService {
     };
   }
 
-  signup(dto: RegisterDTO) {
+  async signup(dto: RegisterDTO) {
+    const checkEmail = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    if (checkEmail) {
+      throw new BadRequestException('Email already exist');
+    }
+
     return {
       message: 'register !',
     };
