@@ -24,7 +24,10 @@ export class AuthService {
       throw new ForbiddenException('invalid credentials');
     }
 
-    const checkPassword = await argon.verify(currentUser.password, password);
+    const checkPassword: boolean = await argon.verify(
+      currentUser.password,
+      password,
+    );
 
     if (!checkPassword) {
       throw new ForbiddenException('invalid credentials');
@@ -45,8 +48,24 @@ export class AuthService {
       throw new BadRequestException('Email already exist');
     }
 
-    return {
-      message: 'register !',
-    };
+    const hashedPassword: string = await argon.hash(dto.password);
+
+    try {
+      const newUser = await this.prisma.user.create({
+        data: {
+          username: dto.username,
+          email: dto.email,
+          password: hashedPassword,
+          phoneNumber: dto.phoneNumber,
+        },
+      });
+      return {
+        token: await this.jwt.signAsync(newUser),
+        data: newUser,
+      };
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return error;
+    }
   }
 }
