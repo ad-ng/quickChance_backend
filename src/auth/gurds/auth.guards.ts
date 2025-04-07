@@ -1,5 +1,5 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import {
   CanActivate,
   ExecutionContext,
@@ -22,8 +22,8 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-     const tokenPayLoad:object = await this.jwtService.verifyAsync(token);
-     request.user = tokenPayLoad;
+      const tokenPayLoad: object = await this.jwtService.verifyAsync(token);
+      request.user = tokenPayLoad;
       return true;
     } catch (error) {
       console.error(error);
