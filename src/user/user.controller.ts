@@ -16,6 +16,6 @@ export class UserController {
 
   @Post('/update')
   updateCurrentUser(@Req() req: Request, @Body() dto: UpdateUserDTO) {
-    return this.userService.updateUser(req.user);
+    return this.userService.updateUser(req.user, dto);
   }
 }
