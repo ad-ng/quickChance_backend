@@ -27,6 +27,16 @@ export class UserService {
     };
   }
 
+  async deleteUser(user) {
+    await this.validatedUser(user);
+
+    await this.prisma.user.delete({ where: { id: user.id } });
+
+    return {
+      message: 'user deleted successfully',
+    };
+  }
+
   // a function to easily validate the incoming user data
   async validatedUser(user) {
     const userId: number = user.id;
