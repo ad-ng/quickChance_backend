@@ -16,4 +16,8 @@ export class UserService {
       data: currentUser,
     };
   }
+
+  updateUser(user) {
+    return 'update user route';
+  }
 }

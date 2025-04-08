@@ -1,7 +1,8 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/auth/gurds/auth.guards';
 import { Request } from 'express';
+import { UpdateUserDTO } from './dtos';
 
 @UseGuards(AuthGuard)
 @Controller('user')
@@ -11,5 +12,10 @@ export class UserController {
   @Get('')
   currentUser(@Req() req: Request) {
     return this.userService.getCurrentUser(req.user);
+  }
+
+  @Post('/update')
+  updateCurrentUser(@Req() req: Request, @Body() dto: UpdateUserDTO) {
+    return this.userService.updateUser(req.user);
   }
 }
