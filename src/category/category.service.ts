@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CategoryDTO } from './dtos';
 
@@ -28,6 +32,36 @@ export class CategoryService {
     return {
       message: 'Category Created Successfully',
       data: addedCategory,
+    };
+  }
+
+  async updateCategory(dto: CategoryDTO, params) {
+    const id = parseInt(params.id, 10);
+
+    const doesCategoryExist = await this.prisma.category.findUnique({
+      where: { id },
+    });
+
+    if (!doesCategoryExist) {
+      throw new NotFoundException();
+    }
+
+    const checkIfNameExist = await this.prisma.category.findUnique({
+      where: { name: dto.name },
+    });
+
+    if (checkIfNameExist) {
+      throw new BadRequestException('category already exist');
+    }
+
+    const updatedCategory = await this.prisma.category.update({
+      where: { id },
+      data: dto,
+    });
+
+    return {
+      message: 'Category',
+      data: updatedCategory,
     };
   }
 }

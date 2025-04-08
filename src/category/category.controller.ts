@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from 'src/auth/gurds/auth.guards';
 import { CategoryService } from './category.service';
 import { CategoryDTO } from './dtos';
@@ -15,5 +23,10 @@ export class CategoryController {
   @Post()
   createCategory(@Body() dto: CategoryDTO) {
     return this.categoryService.addCategory(dto);
+  }
+
+  @Patch(':id')
+  updateCategory(@Body() dto: CategoryDTO, @Param() param: any) {
+    return this.categoryService.updateCategory(dto, param);
   }
 }
