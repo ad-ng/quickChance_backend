@@ -64,4 +64,21 @@ export class CategoryService {
       data: updatedCategory,
     };
   }
+
+  async removeCategory(params) {
+    const id = parseInt(params.id, 10);
+    const checkCategory = await this.prisma.category.findUnique({
+      where: { id },
+    });
+
+    if (!checkCategory) {
+      throw new NotFoundException();
+    }
+
+    await this.prisma.category.delete({ where: { id } });
+
+    return {
+      message: 'Category Deleted Successfully',
+    };
+  }
 }
