@@ -29,4 +29,6 @@ export class OpportunityService {
       data: checkOpp,
     };
   }
+
+  async createOpp() {}
 }
