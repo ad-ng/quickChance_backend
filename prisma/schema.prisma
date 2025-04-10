@@ -22,19 +22,12 @@ model User {
   location         String?
   preferences      String[]
   dob              DateTime?
+  role             RoleStatus     @default(user)
+  opportunity      Opportunity[]
   notification     Notification[]
   verificationCode String?
   phoneNumber      String?
   createdAt        DateTime       @default(now())
-}
-
-model Admin {
-  id          Int           @id @default(autoincrement())
-  name        String        @unique
-  email       String?
-  password    String
-  opportunity Opportunity[]
-  createdAt   DateTime      @default(now())
 }
 
 model Opportunity {
@@ -43,8 +36,8 @@ model Opportunity {
   description  String
   location     String?
   deadline     DateTime?
-  adminId      Int
-  admin        Admin             @relation(fields: [adminId], references: [id])
+  userId       Int
+  user         User              @relation(fields: [userId], references: [id])
   notification Notification[]
   categoryId   Int
   category     Category          @relation(fields: [categoryId], references: [id])
@@ -78,4 +71,10 @@ enum OpportunityStatus {
   active
   expired
   closed
+}
+
+enum RoleStatus {
+  admin
+  moderator
+  user
 }
