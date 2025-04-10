@@ -1,32 +1,25 @@
 -- CreateEnum
 CREATE TYPE "OpportunityStatus" AS ENUM ('active', 'expired', 'closed');
 
+-- CreateEnum
+CREATE TYPE "RoleStatus" AS ENUM ('admin', 'moderator', 'user');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
     "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "isVerified" BOOLEAN NOT NULL DEFAULT false,
-    "password" TEXT,
+    "password" TEXT NOT NULL,
     "location" TEXT,
     "preferences" TEXT[],
     "dob" TIMESTAMP(3),
+    "role" "RoleStatus" NOT NULL DEFAULT 'user',
     "verificationCode" TEXT,
     "phoneNumber" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Admin" (
-    "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
-    "email" TEXT,
-    "password" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "Admin_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -36,7 +29,7 @@ CREATE TABLE "Opportunity" (
     "description" TEXT NOT NULL,
     "location" TEXT,
     "deadline" TIMESTAMP(3),
-    "adminId" INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
     "categoryId" INTEGER NOT NULL,
     "status" "OpportunityStatus" NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -71,10 +64,10 @@ CREATE TABLE "Category" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Admin_name_key" ON "Admin"("name");
+CREATE UNIQUE INDEX "Category_name_key" ON "Category"("name");
 
 -- AddForeignKey
-ALTER TABLE "Opportunity" ADD CONSTRAINT "Opportunity_adminId_fkey" FOREIGN KEY ("adminId") REFERENCES "Admin"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Opportunity" ADD CONSTRAINT "Opportunity_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Opportunity" ADD CONSTRAINT "Opportunity_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
