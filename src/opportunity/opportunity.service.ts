@@ -60,4 +60,52 @@ export class OpportunityService {
       throw new InternalServerErrorException(error);
     }
   }
+
+  async updateById(dto: CreateOppDTO, params) {
+    const id: number = parseInt(params.id, 10);
+
+    const checkOpp = await this.prisma.opportunity.findUnique({
+      where: { id },
+    });
+
+    if (!checkOpp) {
+      throw new NotFoundException();
+    }
+
+    try {
+      const updatedOpp: object = await this.prisma.opportunity.update({
+        where: { id },
+        data: dto,
+      });
+
+      return {
+        message: 'Opportunity Updated Successfully',
+        data: updatedOpp,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async deleteOppById(params) {
+    const id = parseInt(params.id, 10);
+
+    const checkOpp = await this.prisma.opportunity.findUnique({
+      where: { id },
+    });
+
+    if (!checkOpp) {
+      throw new NotFoundException();
+    }
+
+    try {
+      await this.prisma.opportunity.delete({ where: { id } });
+
+      return {
+        message: 'Opportunity Deleted Successfully',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 }
