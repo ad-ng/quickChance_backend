@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { OpportunityService } from './opportunity.service';
 import { AuthGuard, RolesGuard } from 'src/auth/guards';
 
@@ -10,5 +10,10 @@ export class OpportunityController {
   @Get()
   getAllOpp() {
     return this.opportunityService.fetchAllOpportunity();
+  }
+
+  @Get(':id')
+  getOneProp(@Param() param: any) {
+    return this.opportunityService.fetchOneById(param);
   }
 }
