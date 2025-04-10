@@ -33,5 +33,5 @@ export class CreateOppDTO {
   @IsEnum(OpportunityStatus, {
     message: 'status can only be active, expired or closed',
   })
-  status: string;
+  status: OpportunityStatus;
 }

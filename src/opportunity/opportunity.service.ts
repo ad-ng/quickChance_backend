@@ -1,5 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateOppDTO } from './dto/createOpp.dto';
 
 @Injectable()
 export class OpportunityService {
@@ -30,5 +36,28 @@ export class OpportunityService {
     };
   }
 
-  async createOpp() {}
+  async createOpp(dto: CreateOppDTO, user) {
+    const userId: number = user.id;
+
+    try {
+      const newOpp = await this.prisma.opportunity.create({
+        data: {
+          title: dto.title,
+          description: dto.description,
+          status: dto.status,
+          categoryId: dto.categoryId,
+          userId,
+          deadline: dto.deadline,
+          location: dto.location,
+        },
+      });
+
+      return {
+        message: 'Opportunity Created Successfully !',
+        data: newOpp,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 }
