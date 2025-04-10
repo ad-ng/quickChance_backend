@@ -8,9 +8,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { AuthGuard } from 'src/auth/gurds/auth.guards';
 import { Request } from 'express';
 import { UpdateUserDTO } from './dtos';
+import { AuthGuard } from 'src/auth/guards';
 
 @UseGuards(AuthGuard)
 @Controller('user')

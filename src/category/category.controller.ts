@@ -8,10 +8,9 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from 'src/auth/gurds/auth.guards';
 import { CategoryService } from './category.service';
 import { CategoryDTO } from './dtos';
-import { RolesGuard } from 'src/auth/gurds';
+import { AuthGuard, RolesGuard } from 'src/auth/guards';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { RoleStatus } from '@prisma/client';
 
