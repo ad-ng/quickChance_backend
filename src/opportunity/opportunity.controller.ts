@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Req,
   UseGuards,
@@ -33,5 +34,11 @@ export class OpportunityController {
   @Post()
   addOpp(@Req() req: Request, @Body() dto: CreateOppDTO) {
     return this.opportunityService.createOpp(dto, req.user);
+  }
+
+  @Roles(RoleStatus.admin, RoleStatus.moderator)
+  @Patch(':id')
+  updateOne(@Param() param: any, @Body() dto: CreateOppDTO) {
+    return this.opportunityService.updateById(dto, param);
   }
 }
