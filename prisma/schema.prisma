@@ -16,6 +16,8 @@ datasource db {
 model User {
   id               Int            @id @default(autoincrement())
   username         String
+  fullname         String?
+  gender           String?
   email            String         @unique
   isVerified       Boolean        @default(false)
   password         String
