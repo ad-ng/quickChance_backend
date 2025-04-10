@@ -8,6 +8,8 @@ CREATE TYPE "RoleStatus" AS ENUM ('admin', 'moderator', 'user');
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
     "username" TEXT NOT NULL,
+    "fullname" TEXT,
+    "gender" TEXT,
     "email" TEXT NOT NULL,
     "isVerified" BOOLEAN NOT NULL DEFAULT false,
     "password" TEXT NOT NULL,
