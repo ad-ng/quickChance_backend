@@ -11,6 +11,8 @@ import { OpportunityService } from './opportunity.service';
 import { AuthGuard, RolesGuard } from 'src/auth/guards';
 import { Request } from 'express';
 import { CreateOppDTO } from './dto/createOpp.dto';
+import { Roles } from 'src/auth/decorators/role.decorator';
+import { RoleStatus } from '@prisma/client';
 
 @UseGuards(AuthGuard, RolesGuard)
 @Controller('opportunity')
@@ -27,6 +29,7 @@ export class OpportunityController {
     return this.opportunityService.fetchOneById(param);
   }
 
+  @Roles(RoleStatus.admin, RoleStatus.moderator)
   @Post()
   addOpp(@Req() req: Request, @Body() dto: CreateOppDTO) {
     return this.opportunityService.createOpp(dto, req.user);
