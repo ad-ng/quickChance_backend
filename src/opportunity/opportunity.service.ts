@@ -86,4 +86,26 @@ export class OpportunityService {
       throw new InternalServerErrorException(error);
     }
   }
+
+  async deleteOppById(params) {
+    const id = parseInt(params.id, 10);
+
+    const checkOpp = await this.prisma.opportunity.findUnique({
+      where: { id },
+    });
+
+    if (!checkOpp) {
+      throw new NotFoundException();
+    }
+
+    try {
+      await this.prisma.opportunity.delete({ where: { id } });
+
+      return {
+        message: 'Opportunity Deleted Successfully',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 }
