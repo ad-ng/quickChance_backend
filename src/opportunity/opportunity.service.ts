@@ -12,7 +12,10 @@ export class OpportunityService {
   constructor(private prisma: PrismaService) {}
 
   async fetchAllOpportunity() {
-    const allOpportunity = await this.prisma.opportunity.findMany();
+    const allOpportunity = await this.prisma.opportunity.findMany({
+      orderBy: [{ id: 'desc' }],
+      include: { user: true },
+    });
 
     return {
       message: 'opportunity fetched successfully',
