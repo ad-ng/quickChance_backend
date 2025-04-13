@@ -43,7 +43,7 @@ model Opportunity {
   notification Notification[]
   categoryId   Int
   category     Category          @relation(fields: [categoryId], references: [id])
-  status       OpportunityStatus
+  status       OpportunityStatus @default(open)
   updatedAt    DateTime          @updatedAt
   createdAt    DateTime          @default(now())
 }
@@ -70,8 +70,7 @@ model Category {
 }
 
 enum OpportunityStatus {
-  active
-  expired
+  open
   closed
 }
 
