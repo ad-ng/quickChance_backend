@@ -33,6 +33,7 @@ model User {
   verificationCode String?
   phoneNumber      String?
   createdAt        DateTime       @default(now())
+  Saved            Saved[]
 }
 
 model Opportunity {
@@ -46,6 +47,7 @@ model Opportunity {
   notification Notification[]
   like         Like[]
   comment      Comment[]
+  saved        Saved[]
   categoryId   Int
   category     Category          @relation(fields: [categoryId], references: [id])
   status       OpportunityStatus @default(open)
@@ -85,6 +87,16 @@ model Like {
 }
 
 model Comment {
+  id     Int         @id @default(autoincrement())
+  oppId  Int
+  opp    Opportunity @relation(fields: [oppId], references: [id])
+  userid Int
+  user   User        @relation(fields: [userid], references: [id])
+
+  @@unique([oppId, userid])
+}
+
+model Saved {
   id     Int         @id @default(autoincrement())
   oppId  Int
   opp    Opportunity @relation(fields: [oppId], references: [id])
