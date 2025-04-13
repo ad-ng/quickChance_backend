@@ -42,6 +42,11 @@ export class UserService {
     const userId: number = user.id;
     const currentUser = await this.prisma.user.findUnique({
       where: { id: userId },
+      include: {
+        _count: {
+          select: { opportunity: true },
+        },
+      },
     });
     if (!currentUser) throw new UnauthorizedException();
     return currentUser;
