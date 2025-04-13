@@ -29,6 +29,7 @@ model User {
   opportunity      Opportunity[]
   notification     Notification[]
   like             Like[]
+  comment          Comment[]
   verificationCode String?
   phoneNumber      String?
   createdAt        DateTime       @default(now())
@@ -44,6 +45,7 @@ model Opportunity {
   user         User              @relation(fields: [userId], references: [id])
   notification Notification[]
   like         Like[]
+  comment      Comment[]
   categoryId   Int
   category     Category          @relation(fields: [categoryId], references: [id])
   status       OpportunityStatus @default(open)
@@ -73,6 +75,16 @@ model Category {
 }
 
 model Like {
+  id     Int         @id @default(autoincrement())
+  oppId  Int
+  opp    Opportunity @relation(fields: [oppId], references: [id])
+  userid Int
+  user   User        @relation(fields: [userid], references: [id])
+
+  @@unique([oppId, userid])
+}
+
+model Comment {
   id     Int         @id @default(autoincrement())
   oppId  Int
   opp    Opportunity @relation(fields: [oppId], references: [id])
