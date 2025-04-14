@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { SavedService } from './saved.service';
 import { Request } from 'express';
 import { AuthGuard } from 'src/auth/guards';
@@ -8,13 +8,18 @@ import { AuthGuard } from 'src/auth/guards';
 export class SavedController {
   constructor(private savedService: SavedService) {}
 
-  @Get('/me')
+  @Get('me')
   mySaved(@Req() req: Request) {
     return this.savedService.allMySaves(req.user);
   }
 
-  @Get('/:oppId')
+  @Get(':oppId')
   totalOppSaves(@Param() param: any) {
     return this.savedService.totalSaved(param);
+  }
+
+  @Post(':oppId')
+  saveOpp(@Param() param: any, @Req() req: Request) {
+    return this.savedService.savingOpp(param, req.user);
   }
 }

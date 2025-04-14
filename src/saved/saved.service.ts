@@ -54,4 +54,30 @@ export class SavedService {
       throw new InternalServerErrorException(error);
     }
   }
+
+  async savingOpp(param, user) {
+    const oppId: number = parseInt(param.oppId, 10);
+    const checkOpp = await this.prisma.opportunity.findUnique({
+      where: { id: oppId },
+    });
+
+    if (!checkOpp) throw new NotFoundException('Opp not found');
+
+    const userId = user.id;
+
+    try {
+      const saveOpp = await this.prisma.saved.create({
+        data: {
+          oppId: oppId,
+          userid: userId,
+        },
+      });
+      return {
+        message: 'opp saved successfully',
+        data: saveOpp,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 }
