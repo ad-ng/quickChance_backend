@@ -22,14 +22,18 @@ model User {
   isVerified       Boolean        @default(false)
   password         String
   location         String?
+  profileImg       String?
   preferences      String[]
   dob              DateTime?
   role             RoleStatus     @default(user)
   opportunity      Opportunity[]
   notification     Notification[]
+  like             Like[]
+  comment          Comment[]
   verificationCode String?
   phoneNumber      String?
   createdAt        DateTime       @default(now())
+  Saved            Saved[]
 }
 
 model Opportunity {
@@ -41,9 +45,12 @@ model Opportunity {
   userId       Int
   user         User              @relation(fields: [userId], references: [id])
   notification Notification[]
+  like         Like[]
+  comment      Comment[]
+  saved        Saved[]
   categoryId   Int
   category     Category          @relation(fields: [categoryId], references: [id])
-  status       OpportunityStatus
+  status       OpportunityStatus @default(open)
   updatedAt    DateTime          @updatedAt
   createdAt    DateTime          @default(now())
 }
@@ -69,9 +76,38 @@ model Category {
   opportunity  Opportunity[]
 }
 
+model Like {
+  id     Int         @id @default(autoincrement())
+  oppId  Int
+  opp    Opportunity @relation(fields: [oppId], references: [id])
+  userid Int
+  user   User        @relation(fields: [userid], references: [id])
+
+  @@unique([oppId, userid])
+}
+
+model Comment {
+  id     Int         @id @default(autoincrement())
+  oppId  Int
+  opp    Opportunity @relation(fields: [oppId], references: [id])
+  userid Int
+  user   User        @relation(fields: [userid], references: [id])
+
+  @@unique([oppId, userid])
+}
+
+model Saved {
+  id     Int         @id @default(autoincrement())
+  oppId  Int
+  opp    Opportunity @relation(fields: [oppId], references: [id])
+  userid Int
+  user   User        @relation(fields: [userid], references: [id])
+
+  @@unique([oppId, userid])
+}
+
 enum OpportunityStatus {
-  active
-  expired
+  open
   closed
 }
 

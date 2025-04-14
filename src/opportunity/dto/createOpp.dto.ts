@@ -1,7 +1,5 @@
-import { OpportunityStatus } from '@prisma/client';
 import {
   IsDateString,
-  IsEnum,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -28,10 +26,4 @@ export class CreateOppDTO {
   @IsNotEmpty()
   @IsInt()
   categoryId: number;
-
-  @IsNotEmpty()
-  @IsEnum(OpportunityStatus, {
-    message: 'status can only be active, expired or closed',
-  })
-  status: OpportunityStatus;
 }

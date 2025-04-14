@@ -47,7 +47,6 @@ export class OpportunityService {
         data: {
           title: dto.title,
           description: dto.description,
-          status: dto.status,
           categoryId: dto.categoryId,
           userId,
           deadline: dto.deadline,
