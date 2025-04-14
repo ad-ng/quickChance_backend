@@ -45,6 +45,7 @@ export class SavedService {
     try {
       const allSaves = await this.prisma.saved.findMany({
         where: { userid: user.id },
+        include: { opp: true },
       });
       return {
         message: 'fetching saved opps',
