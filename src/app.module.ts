@@ -7,6 +7,7 @@ import { CategoryModule } from './category/category.module';
 import { OpportunityModule } from './opportunity/opportunity.module';
 import { AppController } from './app.controller';
 import { LikeModule } from './like/like.module';
+import { SavedModule } from './saved/saved.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { LikeModule } from './like/like.module';
     CategoryModule,
     OpportunityModule,
     LikeModule,
+    SavedModule,
   ],
   controllers: [AppController],
 })
