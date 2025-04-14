@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { SavedService } from './saved.service';
 import { Request } from 'express';
 import { AuthGuard } from 'src/auth/guards';
@@ -21,5 +29,10 @@ export class SavedController {
   @Post(':oppId')
   saveOpp(@Param() param: any, @Req() req: Request) {
     return this.savedService.savingOpp(param, req.user);
+  }
+
+  @Delete(':id')
+  deleteSaved(@Param() param: any) {
+    return this.savedService.deleteSave(param);
   }
 }

@@ -81,4 +81,20 @@ export class SavedService {
       throw new InternalServerErrorException(error);
     }
   }
+
+  async deleteSave(param) {
+    const id: number = parseInt(param.id, 10);
+    const checkSave = await this.prisma.saved.findUnique({ where: { id } });
+
+    if (!checkSave) throw new NotFoundException();
+
+    try {
+      await this.prisma.saved.delete({ where: { id } });
+      return {
+        message: 'saved deleted successfully',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 }
