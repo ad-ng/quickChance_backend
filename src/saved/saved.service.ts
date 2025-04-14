@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -27,6 +29,26 @@ export class SavedService {
         data: {
           count: savedCount,
         },
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async allMySaves(user) {
+    const checkUser = await this.prisma.user.findUnique({
+      where: { id: user.id },
+    });
+
+    if (!checkUser) throw new UnauthorizedException();
+
+    try {
+      const allSaves = await this.prisma.saved.findMany({
+        where: { userid: user.id },
+      });
+      return {
+        message: 'fetching saved opps',
+        data: allSaves,
       };
     } catch (error) {
       throw new InternalServerErrorException(error);
