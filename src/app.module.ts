@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { CategoryModule } from './category/category.module';
 import { OpportunityModule } from './opportunity/opportunity.module';
 import { AppController } from './app.controller';
+import { LikeModule } from './like/like.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AppController } from './app.controller';
     UserModule,
     CategoryModule,
     OpportunityModule,
+    LikeModule,
   ],
   controllers: [AppController],
 })
