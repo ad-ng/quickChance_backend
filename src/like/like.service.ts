@@ -103,4 +103,40 @@ export class LikeService {
       throw new InternalServerErrorException(error);
     }
   }
+
+  async unliking(params, user) {
+    const userId: number = parseInt(user.id, 10);
+    const checkUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!checkUser) {
+      throw new UnauthorizedException();
+    }
+
+    const oppId: number = parseInt(params.oppId, 10);
+    const checkOpp = await this.prisma.opportunity.findUnique({
+      where: { id: oppId },
+    });
+
+    if (!checkOpp) {
+      throw new NotFoundException();
+    }
+
+    try {
+      await this.prisma.like.delete({
+        where: {
+          oppId_userid: {
+            oppId: oppId,
+            userid: userId,
+          },
+        },
+      });
+      return {
+        message: 'like deleted successfully',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 }

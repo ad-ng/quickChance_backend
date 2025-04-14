@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { LikeService } from './like.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -22,5 +30,10 @@ export class LikeController {
   @Post('add/:oppId')
   addLike(@Param() param: any, @Req() req: Request) {
     return this.likeService.createLike(param, req.user);
+  }
+
+  @Delete('delete/:oppId')
+  deleteLike(@Param() param: any, @Req() req: Request) {
+    return this.likeService.unliking(param, req.user);
   }
 }
