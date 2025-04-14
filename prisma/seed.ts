@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { faker } from '@faker-js/faker';
 import { PrismaClient } from '@prisma/client';
 import * as argon from 'argon2';
@@ -49,7 +48,7 @@ async function main() {
         userId: faker.number.int({ min: 1, max: 10 }),
         location: faker.location.city(),
         description: faker.lorem.paragraph(),
-        status: 'active',
+        status: 'open',
         deadline: faker.date.future(),
         categoryId: faker.number.int({ min: 1, max: 10 }),
       },
