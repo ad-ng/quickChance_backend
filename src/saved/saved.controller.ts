@@ -5,8 +5,8 @@ import { SavedService } from './saved.service';
 export class SavedController {
   constructor(private savedService: SavedService) {}
 
-  @Get(':oppId')
-  total(@Param() param: any) {
-    return this.savedService.getTotalOfSave(param);
+  @Get('/:oppId')
+  totalOppSaves(@Param() param: any) {
+    return this.savedService.totalSaved(param);
   }
 }

@@ -1,11 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class SavedService {
   constructor(private prisma: PrismaService) {}
 
-  async getTotalOfSave(params) {
+  async totalSaved(params) {
     const oppId: number = parseInt(params.oppId, 10);
     const checkOpp = await this.prisma.opportunity.findUnique({
       where: { id: oppId },
@@ -13,15 +17,19 @@ export class SavedService {
 
     if (!checkOpp) throw new NotFoundException();
 
-    const totalSavedOpps: number = await this.prisma.saved.count({
-      where: { oppId: oppId },
-    });
+    try {
+      const savedCount = await this.prisma.saved.count({
+        where: { oppId: oppId },
+      });
 
-    return {
-      message: 'fetching total of all saved Opps',
-      data: {
-        total: totalSavedOpps,
-      },
-    };
+      return {
+        message: 'all saved count',
+        data: {
+          count: savedCount,
+        },
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 }
