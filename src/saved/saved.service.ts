@@ -97,4 +97,48 @@ export class SavedService {
       throw new InternalServerErrorException(error);
     }
   }
+
+  async checkSaved(param, user) {
+    const oppId: number = parseInt(param.oppId, 10);
+    const checkOpp = await this.prisma.opportunity.findUnique({
+      where: { id: oppId },
+    });
+
+    if (!checkOpp) throw new NotFoundException();
+
+    const userId: number = user.id;
+    const checkUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!checkUser) throw new UnauthorizedException();
+
+    try {
+      const savedChecking = await this.prisma.saved.findUnique({
+        where: {
+          oppId_userid: {
+            oppId: oppId,
+            userid: userId,
+          },
+        },
+      });
+      if (!savedChecking) {
+        return {
+          message: 'fetch is saved',
+          data: {
+            isSaved: false,
+          },
+        };
+      }
+
+      return {
+        message: 'fetch is saved',
+        data: {
+          isSaved: true,
+        },
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 }
