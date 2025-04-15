@@ -7,6 +7,18 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log('###########################################################');
+  await prisma.user.create({
+    data: {
+      email: 'johndoe@gmail.com',
+      password: await argon.hash('test@123'),
+      fullname: 'John Doe',
+      username: 'johndoe',
+      gender: 'male',
+      dob: faker.date.birthdate(),
+      role: 'admin',
+      isVerified: true,
+    },
+  });
 
   for (let i = 1; i < 11; i++) {
     const gender = i % 2 == 0 ? 'male' : 'female';
