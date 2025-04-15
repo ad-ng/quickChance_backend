@@ -85,4 +85,22 @@ export class CommentService {
       throw new InternalServerErrorException(error);
     }
   }
+
+  async deleteComment(param) {
+    const id: number = parseInt(param.id, 10);
+    const checkComment = await this.prisma.comment.findUnique({
+      where: { id },
+    });
+
+    if (!checkComment) throw new NotFoundException();
+
+    try {
+      await this.prisma.comment.delete({ where: { id } });
+      return {
+        message: 'comment deleted successfully',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 }

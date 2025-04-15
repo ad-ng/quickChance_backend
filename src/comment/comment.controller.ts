@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -30,5 +31,10 @@ export class CommentController {
   @Post(':oppId')
   postComment(@Req() req: Request, @Body() dto: CommentDTO) {
     return this.commentService.addComment(dto, req.user);
+  }
+
+  @Delete(':id')
+  deleteComment(@Param() param: any) {
+    return this.commentService.deleteComment(param);
   }
 }
