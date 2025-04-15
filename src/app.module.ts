@@ -8,6 +8,7 @@ import { OpportunityModule } from './opportunity/opportunity.module';
 import { AppController } from './app.controller';
 import { LikeModule } from './like/like.module';
 import { SavedModule } from './saved/saved.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { SavedModule } from './saved/saved.module';
     OpportunityModule,
     LikeModule,
     SavedModule,
+    CommentModule,
   ],
   controllers: [AppController],
 })

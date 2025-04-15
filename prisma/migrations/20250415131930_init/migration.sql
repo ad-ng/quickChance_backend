@@ -76,6 +76,7 @@ CREATE TABLE "Like" (
 CREATE TABLE "Comment" (
     "id" SERIAL NOT NULL,
     "oppId" INTEGER NOT NULL,
+    "body" TEXT NOT NULL,
     "userid" INTEGER NOT NULL,
 
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
