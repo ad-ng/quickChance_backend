@@ -6,6 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CommentDTO } from './dto';
 
 @Injectable()
 export class CommentService {
@@ -57,8 +58,8 @@ export class CommentService {
     }
   }
 
-  async addComment(params, user) {
-    const oppId = parseInt(params.oppId, 10);
+  async addComment(dto: CommentDTO, user) {
+    const oppId = dto.oppId;
     const checkOpp = await this.prisma.opportunity.findUnique({
       where: { id: oppId },
     });
@@ -74,7 +75,7 @@ export class CommentService {
 
     try {
       const addedComment = await this.prisma.comment.create({
-        data: { oppId, userid: userId },
+        data: { oppId, userid: userId, body: dto.body },
       });
       return {
         message: 'comment added successfully',

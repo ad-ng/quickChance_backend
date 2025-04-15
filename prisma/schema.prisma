@@ -89,6 +89,7 @@ model Like {
 model Comment {
   id     Int         @id @default(autoincrement())
   oppId  Int
+  body   String
   opp    Opportunity @relation(fields: [oppId], references: [id])
   userid Int
   user   User        @relation(fields: [userid], references: [id])

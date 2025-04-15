@@ -1,7 +1,16 @@
-import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard, RolesGuard } from 'src/auth/guards';
 import { CommentService } from './comment.service';
 import { Request } from 'express';
+import { CommentDTO } from './dto';
 
 @UseGuards(AuthGuard, RolesGuard)
 @Controller('comment')
@@ -19,7 +28,7 @@ export class CommentController {
   }
 
   @Post(':oppId')
-  postComment(@Req() req: Request, @Param() param: any) {
-    return this.commentService.addComment(param, req.user);
+  postComment(@Req() req: Request, @Body() dto: CommentDTO) {
+    return this.commentService.addComment(dto, req.user);
   }
 }
