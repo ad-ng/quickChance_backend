@@ -11,4 +11,9 @@ export class CommentController {
   countComment(@Param() param: any) {
     return this.commentService.oppCommentCount(param);
   }
+
+  @Get(':oppId')
+  getComments(@Param() param: any) {
+    return this.commentService.getAllCommentsOnOpp(param);
+  }
 }

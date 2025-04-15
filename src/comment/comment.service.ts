@@ -32,4 +32,26 @@ export class CommentService {
       throw new InternalServerErrorException(error);
     }
   }
+
+  async getAllCommentsOnOpp(params) {
+    const oppId = parseInt(params.oppId, 10);
+    const checkOpp = await this.prisma.opportunity.findUnique({
+      where: { id: oppId },
+    });
+
+    if (!checkOpp) throw new NotFoundException();
+
+    try {
+      const allComments = await this.prisma.comment.findMany({
+        where: { oppId },
+      });
+
+      return {
+        message: 'comments found successfully',
+        data: allComments,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 }
