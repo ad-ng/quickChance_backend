@@ -28,7 +28,7 @@ export class CommentController {
     return this.commentService.getAllCommentsOnOpp(param);
   }
 
-  @Post(':oppId')
+  @Post()
   postComment(@Req() req: Request, @Body() dto: CommentDTO) {
     return this.commentService.addComment(dto, req.user);
   }
