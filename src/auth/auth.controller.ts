@@ -15,4 +15,15 @@ export class AuthController {
   register(@Body() dto: RegisterDTO) {
     return this.authService.signup(dto);
   }
+
+  @Post('googlenew')
+  async googlesLogin(@Body('idToken') idToken: string) {
+    const user = await this.authService.verifyGoogleIdToken(idToken);
+
+    // TODO: Find or create user in your DB and issue your own JWT
+    return {
+      message: 'Login successful',
+      user,
+    };
+  }
 }
