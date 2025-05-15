@@ -1,12 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { loginDTO, RegisterDTO } from './dtos';
+import { GoogleUserDTO, loginDTO, RegisterDTO } from './dtos';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
+import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +17,10 @@ export class AuthService {
     private prisma: PrismaService,
     private jwt: JwtService,
   ) {}
+
+  private client = new OAuth2Client(
+    '1006205845168-365pel72t3stj8krg21fr23k7leo3jb7.apps.googleusercontent.com',
+  );
 
   async signin(dto: loginDTO) {
     const { email, password } = dto;
@@ -67,5 +74,53 @@ export class AuthService {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return error;
     }
+  }
+
+  async verifyGoogleIdToken(idToken: string) {
+    try {
+      const ticket = await this.client.verifyIdToken({
+        idToken,
+        audience:
+          '1006205845168-365pel72t3stj8krg21fr23k7leo3jb7.apps.googleusercontent.com',
+      });
+
+      const payload = ticket.getPayload();
+
+      return {
+        googleId: payload?.sub,
+        email: payload?.email,
+        name: payload?.name,
+        picture: payload?.picture,
+      };
+    } catch (error) {
+      console.error('Google ID token verification failed:', error);
+      throw new UnauthorizedException(`Invalid Google ID token: ${error}`);
+    }
+  }
+
+  async googleService(googleUser: GoogleUserDTO) {
+    const { username, email, profileImg, password } = googleUser;
+    let currentUser;
+    const checkUser = await this.prisma.user.findFirst({
+      where: { username, email },
+    });
+    currentUser = checkUser;
+
+    const hashedPassword: string = await argon.hash(password);
+    if (!checkUser) {
+      currentUser = await this.prisma.user.create({
+        data: {
+          email,
+          username: username.split(' ').join(),
+          profileImg,
+          password: hashedPassword,
+          isVerified: true,
+        },
+      });
+    }
+    return {
+      token: await this.jwt.signAsync(currentUser),
+      data: currentUser,
+    };
   }
 }
