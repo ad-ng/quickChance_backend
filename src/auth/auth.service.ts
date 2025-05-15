@@ -111,7 +111,7 @@ export class AuthService {
       currentUser = await this.prisma.user.create({
         data: {
           email,
-          username: username.split(' ').join(),
+          username: username.replace(' ', '').toLowerCase(),
           profileImg,
           password: hashedPassword,
           isVerified: true,
