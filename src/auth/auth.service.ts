@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   BadRequestException,
   ForbiddenException,
@@ -5,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { loginDTO, RegisterDTO } from './dtos';
+import { GoogleUserDTO, loginDTO, RegisterDTO } from './dtos';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { OAuth2Client } from 'google-auth-library';
@@ -97,5 +98,26 @@ export class AuthService {
     }
   }
 
-  async googleService() {}
+  async googleService(googleUser: GoogleUserDTO) {
+    const { fullname, email, profileImg, password } = googleUser;
+    let currentUser;
+    const checkUser = await this.prisma.user.findFirst({
+      where: { fullname, email },
+    });
+    currentUser = checkUser;
+    if (!checkUser) {
+      currentUser = await this.prisma.user.create({
+        data: {
+          email,
+          username: fullname.split(' ').join(),
+          profileImg,
+          password,
+        },
+      });
+    }
+    return {
+      token: await this.jwt.signAsync(currentUser),
+      data: currentUser,
+    };
+  }
 }

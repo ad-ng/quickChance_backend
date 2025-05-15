@@ -12,4 +12,8 @@ export class GoogleUserDTO {
   @IsNotEmpty()
   @IsString()
   profileImg: string;
+
+  @IsNotEmpty()
+  @IsString()
+  password: string;
 }
