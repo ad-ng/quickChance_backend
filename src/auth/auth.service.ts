@@ -99,17 +99,19 @@ export class AuthService {
   }
 
   async googleService(googleUser: GoogleUserDTO) {
-    const { fullname, email, profileImg, password } = googleUser;
+    const { username, email, profileImg, password } = googleUser;
     let currentUser;
     const checkUser = await this.prisma.user.findFirst({
-      where: { username: fullname, email },
+      where: { username, email },
     });
+    currentUser = checkUser;
+
     const hashedPassword: string = await argon.hash(password);
     if (!checkUser) {
       currentUser = await this.prisma.user.create({
         data: {
           email,
-          username: fullname.split(' ').join(),
+          username: username.split(' ').join(),
           profileImg,
           password: hashedPassword,
           isVerified: true,

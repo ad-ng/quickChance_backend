@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString, IsEmail } from 'class-validator';
 export class GoogleUserDTO {
   @IsNotEmpty()
   @IsString()
-  fullname: string;
+  username: string;
 
   @IsNotEmpty()
   @IsEmail()
