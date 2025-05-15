@@ -102,16 +102,17 @@ export class AuthService {
     const { fullname, email, profileImg, password } = googleUser;
     let currentUser;
     const checkUser = await this.prisma.user.findFirst({
-      where: { fullname, email },
+      where: { username: fullname, email },
     });
-    currentUser = checkUser;
+    const hashedPassword: string = await argon.hash(password);
     if (!checkUser) {
       currentUser = await this.prisma.user.create({
         data: {
           email,
           username: fullname.split(' ').join(),
           profileImg,
-          password,
+          password: hashedPassword,
+          isVerified: true,
         },
       });
     }

@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { loginDTO, RegisterDTO } from './dtos';
+import { GoogleUserDTO, loginDTO, RegisterDTO } from './dtos';
 
 @Controller('auth')
 export class AuthController {
@@ -14,6 +14,11 @@ export class AuthController {
   @Post('/register')
   register(@Body() dto: RegisterDTO) {
     return this.authService.signup(dto);
+  }
+
+  @Post('/google')
+  continueWithGoogle(@Body() dto: GoogleUserDTO) {
+    return this.authService.googleService(dto);
   }
 
   @Post('googlenew')
