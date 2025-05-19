@@ -114,6 +114,7 @@ export class OpportunityService {
   async searchOpportunities(searchQuery: string) {
     try {
       const opps = await this.prisma.opportunity.findMany({
+        include: { user: true },
         where: {
           OR: [
             { title: { contains: searchQuery, mode: 'insensitive' } },
