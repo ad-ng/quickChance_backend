@@ -15,7 +15,7 @@ import { AuthGuard, RolesGuard } from 'src/auth/guards';
 import { Request } from 'express';
 import { CreateOppDTO } from './dto/createOpp.dto';
 import { Roles } from 'src/auth/decorators/role.decorator';
-import { RoleStatus } from '@prisma/client';
+import { OpportunityStatus, RoleStatus } from '@prisma/client';
 
 @UseGuards(AuthGuard, RolesGuard)
 @Controller('opportunity')
@@ -23,8 +23,13 @@ export class OpportunityController {
   constructor(private opportunityService: OpportunityService) {}
 
   @Get('/search')
-  searchOpp(@Query('searchQuery') searchQuery: 'string') {
+  searchOpp(@Query('searchQuery') searchQuery: string) {
     return this.opportunityService.searchOpportunities(searchQuery);
+  }
+
+  @Get('/filter/status')
+  filterOpp(@Query('oppStatus') oppStatus: OpportunityStatus) {
+    return this.opportunityService.filterStatus(oppStatus);
   }
 
   @Get()

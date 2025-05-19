@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateOppDTO } from './dto/createOpp.dto';
+import { OpportunityStatus } from '@prisma/client';
 
 @Injectable()
 export class OpportunityService {
@@ -126,6 +127,26 @@ export class OpportunityService {
             },
             { location: { contains: searchQuery, mode: 'insensitive' } },
           ],
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+      return {
+        message: 'Opportunity Searched Successfully !',
+        data: opps,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async filterStatus(oppStatus: OpportunityStatus) {
+    try {
+      const opps = await this.prisma.opportunity.findMany({
+        include: { user: true },
+        where: {
+          status: oppStatus,
         },
         orderBy: {
           createdAt: 'desc',
