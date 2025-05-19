@@ -88,7 +88,7 @@ export class SavedService {
   }
 
   async deleteSave(param, user) {
-    const oppId: number = parseInt(param.id, 10);
+    const oppId: number = parseInt(param.oppId, 10);
     const userid: number = user.id;
     const checkSave = await this.prisma.saved.findFirst({
       where: { oppId, userid },
