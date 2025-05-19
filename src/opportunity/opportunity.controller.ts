@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -20,6 +21,11 @@ import { RoleStatus } from '@prisma/client';
 @Controller('opportunity')
 export class OpportunityController {
   constructor(private opportunityService: OpportunityService) {}
+
+  @Get('/search')
+  searchOpp(@Query('searchQuery') searchQuery: 'string') {
+    return this.opportunityService.searchOpportunities(searchQuery);
+  }
 
   @Get()
   getAllOpp() {
