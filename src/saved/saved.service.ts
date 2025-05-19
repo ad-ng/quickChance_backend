@@ -87,14 +87,18 @@ export class SavedService {
     }
   }
 
-  async deleteSave(param) {
-    const id: number = parseInt(param.id, 10);
-    const checkSave = await this.prisma.saved.findUnique({ where: { id } });
+  async deleteSave(param, user) {
+    const oppId: number = parseInt(param.id, 10);
+    const userid: number = user.id;
+    const checkSave = await this.prisma.saved.findFirst({
+      where: { oppId, userid },
+    });
 
     if (!checkSave) throw new NotFoundException();
 
     try {
-      await this.prisma.saved.delete({ where: { id } });
+      await this.prisma.saved.deleteMany({ where: { oppId, userid } });
+
       return {
         message: 'saved deleted successfully',
       };
