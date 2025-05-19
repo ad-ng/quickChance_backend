@@ -110,4 +110,32 @@ export class OpportunityService {
       throw new InternalServerErrorException(error);
     }
   }
+
+  async searchOpportunities(searchQuery: string) {
+    try {
+      const opps = await this.prisma.opportunity.findMany({
+        where: {
+          OR: [
+            { title: { contains: searchQuery, mode: 'insensitive' } },
+            { description: { contains: searchQuery, mode: 'insensitive' } },
+            {
+              category: {
+                name: { contains: searchQuery, mode: 'insensitive' },
+              },
+            },
+            { location: { contains: searchQuery, mode: 'insensitive' } },
+          ],
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+      return {
+        message: 'Opportunity Searched Successfully !',
+        data: opps,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 }
