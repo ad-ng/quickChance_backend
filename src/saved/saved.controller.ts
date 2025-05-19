@@ -31,9 +31,9 @@ export class SavedController {
     return this.savedService.savingOpp(param, req.user);
   }
 
-  @Delete(':id')
-  deleteSaved(@Param() param: any) {
-    return this.savedService.deleteSave(param);
+  @Delete(':oppId')
+  deleteSaved(@Param() param: any, @Req() req: Request) {
+    return this.savedService.deleteSave(param, req.user);
   }
 
   @Get('check/:oppId')
