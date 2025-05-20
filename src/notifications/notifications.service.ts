@@ -64,4 +64,30 @@ export class NotificationsService {
       throw new InternalServerErrorException(error);
     }
   }
+
+  async deleteNotification(param, req) {
+    const notId: number = parseInt(param['id'], 10);
+    const userId: number = req.id;
+
+    const checKNot = await this.prisma.notification.findUnique({
+      where: { id: notId },
+    });
+
+    if (!checKNot) throw new NotFoundException();
+
+    const checkUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!checkUser) throw new UnauthorizedException();
+
+    try {
+      await this.prisma.notification.delete({ where: { id: notId } });
+      return {
+        message: 'notification deleted successfully',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 }
