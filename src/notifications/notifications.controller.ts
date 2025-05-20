@@ -1,6 +1,9 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
+import { Request } from 'express';
+import { AuthGuard } from 'src/auth/guards';
 
+@UseGuards(AuthGuard)
 @Controller('notifications')
 export class NotificationsController {
   constructor(private notificationService: NotificationsService) {}
@@ -8,5 +11,10 @@ export class NotificationsController {
   @Get()
   fetchNotifications() {
     return this.notificationService.fetchAllNotifications();
+  }
+
+  @Get('count')
+  countNotifications(@Req() req: Request) {
+    return this.notificationService.countAllNot(req.user);
   }
 }
