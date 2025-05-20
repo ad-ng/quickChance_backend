@@ -1,4 +1,12 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
+import { NotificationsService } from './notifications.service';
 
 @Controller('notifications')
-export class NotificationsController {}
+export class NotificationsController {
+  constructor(private notificationService: NotificationsService) {}
+
+  @Get()
+  fetchNotifications() {
+    return this.notificationService.fetchAllNotifications();
+  }
+}
