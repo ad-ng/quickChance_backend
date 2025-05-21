@@ -1,7 +1,6 @@
 import {
   Controller,
   Delete,
-  Get,
   Param,
   Post,
   Req,
@@ -16,11 +15,6 @@ import { Request } from 'express';
 @Controller('like')
 export class LikeController {
   constructor(private likeService: LikeService) {}
-
-  @Get('check/:oppId')
-  checkIfIliked(@Param() param: any, @Req() req: Request) {
-    return this.likeService.checkIfIlikedOpp(param, req.user);
-  }
 
   @Post('add/:oppId')
   addLike(@Param() param: any, @Req() req: Request) {

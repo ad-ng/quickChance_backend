@@ -61,13 +61,40 @@ export class LikeGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return;
     }
 
-    // 🔍 Fetch like count from DB
+    // Fetch like count from DB
     const likeCount = await this.likeService.singleOpp(opportunityId);
 
-    // 📤 Reply back to the client
-    client.emit('countLikesReply', {
+    // Reply back to the client
+    this.server.to(opportunityId.toString()).emit('countLikesReply', {
       opportunityId,
       likeCount,
+    });
+  }
+
+  @SubscribeMessage('checkIfLiked')
+  async handCheckIfLiked(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: any,
+  ) {
+    const parsed = typeof data === 'string' ? JSON.parse(data) : data;
+    const opportunityId = parseInt(parsed.opportunityId, 10);
+    const userId = parseInt(parsed.userId, 10);
+
+    if (isNaN(opportunityId) || isNaN(userId)) {
+      client.emit('error', { message: 'Invalid opportunityId or userId' });
+      return;
+    }
+
+    // Fetch like count from DB
+    const isLiked = await this.likeService.checkIfIlikedOpp(
+      opportunityId,
+      userId,
+    );
+
+    // Reply back to the client
+    client.emit('checkLikesReply', {
+      opportunityId,
+      isLiked,
     });
   }
 }
