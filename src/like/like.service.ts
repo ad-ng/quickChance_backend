@@ -1,14 +1,21 @@
 import {
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { LikeGateway } from './like.gateway';
 
 @Injectable()
 export class LikeService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Inject(forwardRef(() => LikeGateway))
+    private likeGateway: LikeGateway,
+  ) {}
 
   async singleOpp(oppId: number) {
     const countOppLikes: number = await this.prisma.like.count({
@@ -91,6 +98,11 @@ export class LikeService {
           userid: userId,
         },
       });
+      const likeCount = await this.singleOpp(oppId);
+      this.likeGateway.server.to(`${oppId}`).emit('countLikesReply', {
+        opportunityId: oppId,
+        likeCount,
+      });
       return {
         message: 'like added',
         data: {
@@ -129,6 +141,11 @@ export class LikeService {
             userid: userId,
           },
         },
+      });
+      const likeCount = await this.singleOpp(oppId);
+      this.likeGateway.server.to(`${oppId}`).emit('countLikesReply', {
+        opportunityId: oppId,
+        likeCount,
       });
       return {
         message: 'like deleted successfully',

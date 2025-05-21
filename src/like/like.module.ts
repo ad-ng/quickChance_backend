@@ -4,7 +4,7 @@ import { LikeController } from './like.controller';
 import { LikeGateway } from './like.gateway';
 
 @Module({
-  providers: [LikeService, LikeGateway],
+  providers: [LikeGateway, LikeService],
   controllers: [LikeController],
 })
 export class LikeModule {}
