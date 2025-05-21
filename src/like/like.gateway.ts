@@ -36,16 +36,24 @@ export class LikeGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const parsed = typeof data === 'string' ? JSON.parse(data) : data;
     const opportunityId = parseInt(parsed.opportunityId, 10);
+    const userId = parseInt(parsed.userId, 10);
 
     if (isNaN(opportunityId)) {
       client.emit('error', { message: 'Invalid opportunityId format' });
       return;
     }
 
-    const room = opportunityId.toString();
-    client.join(room);
-    console.log(`Client ${client.id} joined room: ${room}`);
-    client.emit('joinedOpportunity', { opportunityId });
+    const publicRoom = opportunityId.toString(); // for public broadcasts
+    const privateRoom = `${opportunityId}-${userId}`; // for direct targeting
+
+    client.join(publicRoom); // for broadcasting to all users on that opp
+    client.join(privateRoom); // for targeting this specific user
+
+    console.log(
+      `Client ${client.id} joined rooms: [${publicRoom}, ${privateRoom}]`,
+    );
+
+    client.emit('joinedOpportunity', { opportunityId, userId });
   }
 
   @SubscribeMessage('getLikeCount')
@@ -92,7 +100,7 @@ export class LikeGateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
 
     // Reply back to the client
-    client.emit('checkLikesReply', {
+    this.server.to(`${opportunityId}-${userId}`).emit('countLikesReply', {
       opportunityId,
       isLiked,
     });
