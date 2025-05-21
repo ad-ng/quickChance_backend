@@ -10,10 +10,14 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { LikeService } from './like.service';
+import { forwardRef, Inject } from '@nestjs/common';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class LikeGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  constructor(private likeService: LikeService) {}
+  constructor(
+    @Inject(forwardRef(() => LikeService))
+    private likeService: LikeService,
+  ) {}
   @WebSocketServer()
   server: Server;
 
