@@ -17,11 +17,6 @@ import { Request } from 'express';
 export class LikeController {
   constructor(private likeService: LikeService) {}
 
-  @Get(':oppId')
-  singleOppAllLikes(@Param() param: any) {
-    return this.likeService.singleOpp(param);
-  }
-
   @Get('check/:oppId')
   checkIfIliked(@Param() param: any, @Req() req: Request) {
     return this.likeService.checkIfIlikedOpp(param, req.user);
