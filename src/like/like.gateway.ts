@@ -100,7 +100,7 @@ export class LikeGateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
 
     // Reply back to the client
-    this.server.to(`${opportunityId}-${userId}`).emit('countLikesReply', {
+    this.server.to(`${opportunityId}-${userId}`).emit('checkLikesReply', {
       opportunityId,
       isLiked,
     });
