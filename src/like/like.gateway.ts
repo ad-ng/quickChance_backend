@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -17,12 +18,10 @@ export class LikeGateway implements OnGatewayConnection, OnGatewayDisconnect {
   server: Server;
 
   handleConnection(client: Socket) {
-    console.log(`User connected: ${client.id}`);
     client.emit('onConnect', 'connected!');
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`User disconnected: ${client.id}`);
     client.emit('onDisconnect', 'disconnected');
   }
 
