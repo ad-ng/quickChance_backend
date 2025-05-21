@@ -96,6 +96,11 @@ export class LikeService {
         likeCount,
       });
 
+      const checkIfLiked = await this.checkIfIlikedOpp(oppId, userId);
+      this.likeGateway.server.to(`${oppId}-${userId}`).emit('countLikesReply', {
+        oppId,
+        checkIfLiked,
+      });
       return {
         message: 'like added',
         data: {
@@ -139,6 +144,12 @@ export class LikeService {
       this.likeGateway.server.to(`${oppId}`).emit('countLikesReply', {
         opportunityId: oppId,
         likeCount,
+      });
+
+      const checkIfLiked = await this.checkIfIlikedOpp(oppId, userId);
+      this.likeGateway.server.to(`${oppId}-${userId}`).emit('countLikesReply', {
+        oppId,
+        checkIfLiked,
       });
       return {
         message: 'like deleted successfully',
