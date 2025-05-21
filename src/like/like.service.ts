@@ -27,8 +27,7 @@ export class LikeService {
     };
   }
 
-  async checkIfIlikedOpp(params, user) {
-    const userId: number = parseInt(user.id, 10);
+  async checkIfIlikedOpp(oppId: number, userId: number) {
     const checkUser = await this.prisma.user.findUnique({
       where: { id: userId },
     });
@@ -37,7 +36,6 @@ export class LikeService {
       throw new UnauthorizedException();
     }
 
-    const oppId: number = parseInt(params.oppId, 10);
     const checkOpp = await this.prisma.opportunity.findUnique({
       where: { id: oppId },
     });
@@ -57,18 +55,12 @@ export class LikeService {
 
     if (!checkLike) {
       return {
-        message: 'Check like found',
-        data: {
-          checkLike: false,
-        },
+        checkLike: false,
       };
     }
 
     return {
-      message: 'Check like found',
-      data: {
-        checkLike: true,
-      },
+      checkLike: true,
     };
   }
 
@@ -102,6 +94,12 @@ export class LikeService {
       this.likeGateway.server.to(`${oppId}`).emit('countLikesReply', {
         opportunityId: oppId,
         likeCount,
+      });
+
+      const checkIfLiked = await this.checkIfIlikedOpp(oppId, userId);
+      this.likeGateway.server.to(`${oppId}-${userId}`).emit('countLikesReply', {
+        oppId,
+        checkIfLiked,
       });
       return {
         message: 'like added',
@@ -146,6 +144,12 @@ export class LikeService {
       this.likeGateway.server.to(`${oppId}`).emit('countLikesReply', {
         opportunityId: oppId,
         likeCount,
+      });
+
+      const checkIfLiked = await this.checkIfIlikedOpp(oppId, userId);
+      this.likeGateway.server.to(`${oppId}-${userId}`).emit('countLikesReply', {
+        oppId,
+        checkIfLiked,
       });
       return {
         message: 'like deleted successfully',
