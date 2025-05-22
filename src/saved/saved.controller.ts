@@ -30,9 +30,4 @@ export class SavedController {
   deleteSaved(@Param() param: any, @Req() req: Request) {
     return this.savedService.deleteSave(param, req.user);
   }
-
-  @Get('check/:oppId')
-  checkIsSaved(@Param() Param: any, @Req() req: Request) {
-    return this.savedService.checkSaved(Param, req.user);
-  }
 }

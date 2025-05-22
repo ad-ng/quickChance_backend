@@ -87,6 +87,17 @@ export class SavedService {
         SavedCount,
       });
 
+      // Fetch like count from DB
+      const isSaved = await this.checkSaved(oppId, userId);
+
+      // Reply back to the client
+      this.savedGateway.server
+        .to(`${oppId}-${userId}`)
+        .emit('checkSavedReply', {
+          opportunityId: userId,
+          isSaved,
+        });
+
       return {
         message: 'opp saved successfully',
         data: saveOpp,
@@ -117,6 +128,17 @@ export class SavedService {
         SavedCount,
       });
 
+      // Fetch like count from DB
+      const isSaved = await this.checkSaved(oppId, userid);
+
+      // Reply back to the client
+      this.savedGateway.server
+        .to(`${oppId}-${userid}`)
+        .emit('checkSavedReply', {
+          opportunityId: userid,
+          isSaved,
+        });
+
       return {
         message: 'saved deleted successfully',
       };
@@ -125,15 +147,13 @@ export class SavedService {
     }
   }
 
-  async checkSaved(param, user) {
-    const oppId: number = parseInt(param.oppId, 10);
+  async checkSaved(oppId: number, userId: number) {
     const checkOpp = await this.prisma.opportunity.findUnique({
       where: { id: oppId },
     });
 
     if (!checkOpp) throw new NotFoundException();
 
-    const userId: number = user.id;
     const checkUser = await this.prisma.user.findUnique({
       where: { id: userId },
     });
@@ -149,21 +169,12 @@ export class SavedService {
           },
         },
       });
+
       if (!savedChecking) {
-        return {
-          message: 'fetch is saved',
-          data: {
-            isSaved: false,
-          },
-        };
+        return false;
       }
 
-      return {
-        message: 'fetch is saved',
-        data: {
-          isSaved: true,
-        },
-      };
+      return true;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
