@@ -15,7 +15,7 @@ export class OpportunityService {
   async fetchAllOpportunity() {
     const allOpportunity = await this.prisma.opportunity.findMany({
       orderBy: [{ id: 'desc' }],
-      include: { user: true },
+      include: { user: true, category: true },
     });
 
     return {
@@ -115,7 +115,7 @@ export class OpportunityService {
   async searchOpportunities(searchQuery: string) {
     try {
       const opps = await this.prisma.opportunity.findMany({
-        include: { user: true },
+        include: { user: true, category: true },
         where: {
           OR: [
             { title: { contains: searchQuery, mode: 'insensitive' } },
@@ -144,7 +144,7 @@ export class OpportunityService {
   async filterStatus(oppStatus: OpportunityStatus) {
     try {
       const opps = await this.prisma.opportunity.findMany({
-        include: { user: true },
+        include: { user: true, category: true },
         where: {
           status: oppStatus,
         },
