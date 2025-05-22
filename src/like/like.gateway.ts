@@ -53,7 +53,10 @@ export class LikeGateway implements OnGatewayConnection, OnGatewayDisconnect {
       `Client ${client.id} joined rooms: [${publicRoom}, ${privateRoom}]`,
     );
 
-    client.emit('joinedOpportunity', { opportunityId, userId });
+    client.emit(
+      'joinedOpportunity',
+      `Client ${client.id} joined rooms: [${publicRoom}, ${privateRoom}]`,
+    );
   }
 
   @SubscribeMessage('getLikeCount')

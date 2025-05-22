@@ -1,18 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { SavedGateway } from './saved.gateway';
 
 @Injectable()
 export class SavedService {
-  constructor(private prisma: PrismaService) {}
-
-  async totalSaved(params) {
-    const oppId: number = parseInt(params.oppId, 10);
+  constructor(
+    private prisma: PrismaService,
+    @Inject(forwardRef(() => SavedGateway)) private savedGateway: SavedGateway,
+  ) {}
+  async totalSaved(oppId: number) {
     const checkOpp = await this.prisma.opportunity.findUnique({
       where: { id: oppId },
     });
@@ -24,12 +28,7 @@ export class SavedService {
         where: { oppId: oppId },
       });
 
-      return {
-        message: 'all saved count',
-        data: {
-          count: savedCount,
-        },
-      };
+      return savedCount;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -78,6 +77,27 @@ export class SavedService {
           userid: userId,
         },
       });
+
+      // Fetch Saved count
+      const SavedCount = await this.totalSaved(oppId);
+
+      // Reply back to the client
+      this.savedGateway.server.to(oppId.toString()).emit('countSavedReply', {
+        opportunityId: oppId,
+        SavedCount,
+      });
+
+      // Fetch like count from DB
+      const isSaved = await this.checkSaved(oppId, userId);
+
+      // Reply back to the client
+      this.savedGateway.server
+        .to(`${oppId}-${userId}`)
+        .emit('checkSavedReply', {
+          opportunityId: userId,
+          isSaved,
+        });
+
       return {
         message: 'opp saved successfully',
         data: saveOpp,
@@ -99,6 +119,26 @@ export class SavedService {
     try {
       await this.prisma.saved.deleteMany({ where: { oppId, userid } });
 
+      // Fetch Saved count
+      const SavedCount = await this.totalSaved(oppId);
+
+      // Reply back to the client
+      this.savedGateway.server.to(oppId.toString()).emit('countSavedReply', {
+        opportunityId: oppId,
+        SavedCount,
+      });
+
+      // Fetch like count from DB
+      const isSaved = await this.checkSaved(oppId, userid);
+
+      // Reply back to the client
+      this.savedGateway.server
+        .to(`${oppId}-${userid}`)
+        .emit('checkSavedReply', {
+          opportunityId: userid,
+          isSaved,
+        });
+
       return {
         message: 'saved deleted successfully',
       };
@@ -107,15 +147,13 @@ export class SavedService {
     }
   }
 
-  async checkSaved(param, user) {
-    const oppId: number = parseInt(param.oppId, 10);
+  async checkSaved(oppId: number, userId: number) {
     const checkOpp = await this.prisma.opportunity.findUnique({
       where: { id: oppId },
     });
 
     if (!checkOpp) throw new NotFoundException();
 
-    const userId: number = user.id;
     const checkUser = await this.prisma.user.findUnique({
       where: { id: userId },
     });
@@ -131,21 +169,12 @@ export class SavedService {
           },
         },
       });
+
       if (!savedChecking) {
-        return {
-          message: 'fetch is saved',
-          data: {
-            isSaved: false,
-          },
-        };
+        return false;
       }
 
-      return {
-        message: 'fetch is saved',
-        data: {
-          isSaved: true,
-        },
-      };
+      return true;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

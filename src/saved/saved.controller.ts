@@ -21,11 +21,6 @@ export class SavedController {
     return this.savedService.allMySaves(req.user);
   }
 
-  @Get(':oppId')
-  totalOppSaves(@Param() param: any) {
-    return this.savedService.totalSaved(param);
-  }
-
   @Post(':oppId')
   saveOpp(@Param() param: any, @Req() req: Request) {
     return this.savedService.savingOpp(param, req.user);
@@ -34,10 +29,5 @@ export class SavedController {
   @Delete(':oppId')
   deleteSaved(@Param() param: any, @Req() req: Request) {
     return this.savedService.deleteSave(param, req.user);
-  }
-
-  @Get('check/:oppId')
-  checkIsSaved(@Param() Param: any, @Req() req: Request) {
-    return this.savedService.checkSaved(Param, req.user);
   }
 }
