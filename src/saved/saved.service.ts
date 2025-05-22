@@ -48,7 +48,7 @@ export class SavedService {
         orderBy: [{ id: 'desc' }],
         include: {
           opp: {
-            include: { user: true },
+            include: { user: true, category: true },
           },
         },
       });
