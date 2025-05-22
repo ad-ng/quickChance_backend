@@ -1,18 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { SavedGateway } from './saved.gateway';
 
 @Injectable()
 export class SavedService {
-  constructor(private prisma: PrismaService) {}
-
-  async totalSaved(params) {
-    const oppId: number = parseInt(params.oppId, 10);
+  constructor(
+    private prisma: PrismaService,
+    @Inject(forwardRef(() => SavedGateway)) private savedGateway: SavedGateway,
+  ) {}
+  async totalSaved(oppId: number) {
     const checkOpp = await this.prisma.opportunity.findUnique({
       where: { id: oppId },
     });
@@ -24,12 +28,7 @@ export class SavedService {
         where: { oppId: oppId },
       });
 
-      return {
-        message: 'all saved count',
-        data: {
-          count: savedCount,
-        },
-      };
+      return savedCount;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -78,6 +77,16 @@ export class SavedService {
           userid: userId,
         },
       });
+
+      // Fetch Saved count
+      const SavedCount = await this.totalSaved(oppId);
+
+      // Reply back to the client
+      this.savedGateway.server.to(oppId.toString()).emit('countSavedReply', {
+        opportunityId: oppId,
+        SavedCount,
+      });
+
       return {
         message: 'opp saved successfully',
         data: saveOpp,
@@ -98,6 +107,15 @@ export class SavedService {
 
     try {
       await this.prisma.saved.deleteMany({ where: { oppId, userid } });
+
+      // Fetch Saved count
+      const SavedCount = await this.totalSaved(oppId);
+
+      // Reply back to the client
+      this.savedGateway.server.to(oppId.toString()).emit('countSavedReply', {
+        opportunityId: oppId,
+        SavedCount,
+      });
 
       return {
         message: 'saved deleted successfully',

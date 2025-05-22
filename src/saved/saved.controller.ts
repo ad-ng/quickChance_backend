@@ -21,11 +21,6 @@ export class SavedController {
     return this.savedService.allMySaves(req.user);
   }
 
-  @Get(':oppId')
-  totalOppSaves(@Param() param: any) {
-    return this.savedService.totalSaved(param);
-  }
-
   @Post(':oppId')
   saveOpp(@Param() param: any, @Req() req: Request) {
     return this.savedService.savingOpp(param, req.user);
