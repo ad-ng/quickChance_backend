@@ -87,15 +87,12 @@ export class SavedService {
         SavedCount,
       });
 
-      // Fetch like count from DB
-      const isSaved = await this.checkSaved(oppId, userId);
-
       // Reply back to the client
       this.savedGateway.server
         .to(`${oppId}-${userId}`)
         .emit('checkSavedReply', {
           opportunityId: userId,
-          isSaved,
+          isSaved: true,
         });
 
       return {
@@ -119,6 +116,14 @@ export class SavedService {
     try {
       await this.prisma.saved.deleteMany({ where: { oppId, userid } });
 
+      // Reply back to the client
+      this.savedGateway.server
+        .to(`${oppId}-${userid}`)
+        .emit('checkSavedReply', {
+          opportunityId: userid,
+          isSaved: false,
+        });
+
       // Fetch Saved count
       const SavedCount = await this.totalSaved(oppId);
 
@@ -127,17 +132,6 @@ export class SavedService {
         opportunityId: oppId,
         SavedCount,
       });
-
-      // Fetch like count from DB
-      const isSaved = await this.checkSaved(oppId, userid);
-
-      // Reply back to the client
-      this.savedGateway.server
-        .to(`${oppId}-${userid}`)
-        .emit('checkSavedReply', {
-          opportunityId: userid,
-          isSaved,
-        });
 
       return {
         message: 'saved deleted successfully',
