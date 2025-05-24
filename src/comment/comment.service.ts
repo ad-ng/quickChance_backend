@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -7,13 +9,17 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CommentDTO } from './dto';
+import { CommentGateway } from './comment.gateway';
 
 @Injectable()
 export class CommentService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Inject(forwardRef(() => CommentGateway))
+    private commentGateway: CommentGateway,
+  ) {}
 
-  async oppCommentCount(params) {
-    const oppId = parseInt(params.oppId, 10);
+  async oppCommentCount(oppId: number) {
     const checkOpp = await this.prisma.opportunity.findUnique({
       where: { id: oppId },
     });
@@ -25,12 +31,7 @@ export class CommentService {
         where: { oppId: oppId },
       });
 
-      return {
-        message: 'count found successfully',
-        data: {
-          count: commentCount,
-        },
-      };
+      return commentCount;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -78,6 +79,18 @@ export class CommentService {
       const addedComment = await this.prisma.comment.create({
         data: { oppId, userid: userId, body: dto.body },
       });
+
+      // Fetch comments count from DB
+      const commentCount = await this.oppCommentCount(oppId);
+
+      // Reply back to the client
+      this.commentGateway.server
+        .to(oppId.toString())
+        .emit('countCommentReply', {
+          opportunityId: oppId,
+          commentCount,
+        });
+
       return {
         message: 'comment added successfully',
         data: addedComment,
@@ -97,6 +110,18 @@ export class CommentService {
 
     try {
       await this.prisma.comment.delete({ where: { id } });
+
+      // Fetch comments count from DB
+      const commentCount = await this.oppCommentCount(checkComment.oppId);
+
+      // Reply back to the client
+      this.commentGateway.server
+        .to(checkComment.oppId.toString())
+        .emit('countCommentReply', {
+          opportunityId: checkComment.oppId,
+          commentCount,
+        });
+
       return {
         message: 'comment deleted successfully',
       };
