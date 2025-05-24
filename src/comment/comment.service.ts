@@ -46,6 +46,7 @@ export class CommentService {
 
     try {
       const allComments = await this.prisma.comment.findMany({
+        include: { user: true },
         where: { oppId },
       });
 
