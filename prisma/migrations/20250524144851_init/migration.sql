@@ -33,6 +33,7 @@ CREATE TABLE "Opportunity" (
     "location" TEXT,
     "deadline" TIMESTAMP(3),
     "userId" INTEGER NOT NULL,
+    "oppLink" TEXT,
     "categoryId" INTEGER NOT NULL,
     "status" "OpportunityStatus" NOT NULL DEFAULT 'open',
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -78,6 +79,7 @@ CREATE TABLE "Comment" (
     "oppId" INTEGER NOT NULL,
     "body" TEXT NOT NULL,
     "userid" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
 );
@@ -99,9 +101,6 @@ CREATE UNIQUE INDEX "Category_name_key" ON "Category"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Like_oppId_userid_key" ON "Like"("oppId", "userid");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Comment_oppId_userid_key" ON "Comment"("oppId", "userid");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Saved_oppId_userid_key" ON "Saved"("oppId", "userid");

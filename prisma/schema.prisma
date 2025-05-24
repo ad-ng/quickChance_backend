@@ -43,6 +43,7 @@ model Opportunity {
   location     String?
   deadline     DateTime?
   userId       Int
+  oppLink      String?
   user         User              @relation(fields: [userId], references: [id])
   notification Notification[]
   like         Like[]
@@ -93,8 +94,7 @@ model Comment {
   opp    Opportunity @relation(fields: [oppId], references: [id])
   userid Int
   user   User        @relation(fields: [userid], references: [id])
-
-  @@unique([oppId, userid])
+  createdAt DateTime @default(now())
 }
 
 model Saved {
