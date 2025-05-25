@@ -102,7 +102,7 @@ export class AuthService {
     const { username, email, profileImg, password } = googleUser;
     let currentUser;
     const checkUser = await this.prisma.user.findFirst({
-      where: { username: username.replace(' ', '').toLowerCase(), email },
+      where: { email },
     });
     currentUser = checkUser;
 

@@ -3,7 +3,7 @@ import {
   Controller,
   Delete,
   Get,
-  Post,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -22,7 +22,7 @@ export class UserController {
     return this.userService.getCurrentUser(req.user);
   }
 
-  @Post('/update')
+  @Put('/update')
   updateCurrentUser(@Req() req: Request, @Body() dto: UpdateUserDTO) {
     return this.userService.updateUser(req.user, dto);
   }
