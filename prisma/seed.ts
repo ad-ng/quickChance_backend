@@ -69,6 +69,13 @@ async function main() {
 
   console.log('property seeds completed');
   console.log('########################## seeding ##########################');
+
+  await prisma.notification.create({
+    data: {
+      body: 'welcome to the quick chance family, we help get opportunities easily and faster !',
+      title: 'welcome',
+    },
+  });
 }
 
 main()
