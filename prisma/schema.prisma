@@ -14,25 +14,25 @@ datasource db {
 }
 
 model User {
-  id               Int            @id @default(autoincrement())
+  id               Int                @id @default(autoincrement())
   username         String
   fullname         String?
   gender           String?
-  email            String         @unique
-  isVerified       Boolean        @default(false)
+  email            String             @unique
+  isVerified       Boolean            @default(false)
   password         String
   location         String?
   profileImg       String?
   preferences      String[]
   dob              DateTime?
-  role             RoleStatus     @default(user)
+  role             RoleStatus         @default(user)
   opportunity      Opportunity[]
-  notification     Notification[]
+  userNotification UserNotification[]
   like             Like[]
   comment          Comment[]
   verificationCode String?
   phoneNumber      String?
-  createdAt        DateTime       @default(now())
+  createdAt        DateTime           @default(now())
   Saved            Saved[]
 }
 
@@ -49,25 +49,36 @@ model Opportunity {
   like         Like[]
   comment      Comment[]
   saved        Saved[]
-  categoryId   Int
-  category     Category          @relation(fields: [categoryId], references: [id])
+  categoryId   Int?
+  category     Category?         @relation(fields: [categoryId], references: [id])
   status       OpportunityStatus @default(open)
   updatedAt    DateTime          @updatedAt
   createdAt    DateTime          @default(now())
 }
 
 model Notification {
-  id            Int         @id @default(autoincrement())
-  opportunityId Int
-  opportunity   Opportunity @relation(fields: [opportunityId], references: [id])
-  userId        Int
-  user          User        @relation(fields: [userId], references: [id])
-  categoryId    Int
-  category      Category    @relation(fields: [categoryId], references: [id])
-  title         String
-  body          String
-  isRead        Boolean     @default(false)
-  createdAt     DateTime    @default(now())
+  id                Int                @id @default(autoincrement())
+  opportunityId     Int?
+  opportunity       Opportunity?       @relation(fields: [opportunityId], references: [id])
+  categoryId        Int?
+  category          Category?          @relation(fields: [categoryId], references: [id])
+  title             String
+  body              String
+  userNotifications UserNotification[]
+  createdAt         DateTime           @default(now())
+}
+
+model UserNotification {
+  id             Int          @id @default(autoincrement())
+  user           User         @relation(fields: [userId], references: [id])
+  userId         Int
+  notification   Notification @relation(fields: [notificationId], references: [id])
+  notificationId Int
+  isRead         Boolean      @default(false)
+  isLocalSent    Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+
+  @@unique([userId, notificationId])
 }
 
 model Category {
@@ -88,13 +99,13 @@ model Like {
 }
 
 model Comment {
-  id     Int         @id @default(autoincrement())
-  oppId  Int
-  body   String
-  opp    Opportunity @relation(fields: [oppId], references: [id])
-  userid Int
-  user   User        @relation(fields: [userid], references: [id])
-  createdAt DateTime @default(now())
+  id        Int         @id @default(autoincrement())
+  oppId     Int
+  body      String
+  opp       Opportunity @relation(fields: [oppId], references: [id])
+  userid    Int
+  user      User        @relation(fields: [userid], references: [id])
+  createdAt DateTime    @default(now())
 }
 
 model Saved {
