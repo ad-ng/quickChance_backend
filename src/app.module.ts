@@ -9,7 +9,7 @@ import { AppController } from './app.controller';
 import { LikeModule } from './like/like.module';
 import { SavedModule } from './saved/saved.module';
 import { CommentModule } from './comment/comment.module';
-//import { NotificationsModule } from './notifications/notifications.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -22,7 +22,7 @@ import { CommentModule } from './comment/comment.module';
     LikeModule,
     SavedModule,
     CommentModule,
-    // NotificationsModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
 })
