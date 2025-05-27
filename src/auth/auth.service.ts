@@ -118,6 +118,13 @@ export class AuthService {
           isVerified: true,
         },
       });
+
+      await this.prisma.userNotification.create({
+        data: {
+          notificationId: 1,
+          userId: currentUser.id,
+        },
+      });
     }
     return {
       token: await this.jwt.signAsync(currentUser),
