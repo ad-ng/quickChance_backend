@@ -33,8 +33,7 @@ export class NotificationsService {
     }
   }
 
-  async countAllNot(user) {
-    const userId: number = user.id;
+  async countAllNot(userId) {
     const checkUser = await this.prisma.user.findUnique({
       where: { id: userId },
     });
@@ -43,12 +42,9 @@ export class NotificationsService {
     const notificationCount = await this.prisma.userNotification.count({
       where: { userId },
     });
-    return {
-      message: 'notifications count fetched successfully',
-      data: {
-        notificationCount,
-      },
-    };
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return notificationCount;
   }
   catch(error) {
     throw new InternalServerErrorException(error);

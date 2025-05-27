@@ -13,11 +13,6 @@ export class NotificationsController {
     return this.notificationService.fetchAllNotifications(req.user);
   }
 
-  @Get('count')
-  countNotifications(@Req() req: Request) {
-    return this.notificationService.countAllNot(req.user);
-  }
-
   @Get('read/:id')
   readNotification(@Param() Param: any, @Req() req: Request) {
     return this.notificationService.readingNotification(Param, req.user);
