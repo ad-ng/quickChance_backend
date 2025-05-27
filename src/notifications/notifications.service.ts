@@ -1,15 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { NotificationsGateway } from './notifications.gateway';
 
 @Injectable()
 export class NotificationsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Inject(forwardRef(() => NotificationsGateway))
+    private notificationGateway: NotificationsGateway,
+  ) {}
 
   async fetchAllNotifications(user) {
     const userId: number = user.id;
@@ -63,6 +70,18 @@ export class NotificationsService {
         where: { id: notId },
         data: { isRead: true },
       });
+
+      // Fetch notification count from DB
+      const notificationCount = await this.countAllNot(userId);
+
+      // Reply back to the client
+      this.notificationGateway.server
+        .to(req.email)
+        .emit('countNotificationReply', {
+          userId,
+          notificationCount,
+        });
+
       return {
         message: 'isRead updated successfully',
       };
@@ -88,7 +107,19 @@ export class NotificationsService {
     if (!checkUser) throw new UnauthorizedException();
 
     try {
-      await this.prisma.notification.delete({ where: { id: notId } });
+      await this.prisma.userNotification.delete({ where: { id: notId } });
+
+      // Fetch notification count from DB
+      const notificationCount = await this.countAllNot(userId);
+
+      // Reply back to the client
+      this.notificationGateway.server
+        .to(req.email)
+        .emit('countNotificationReply', {
+          userId,
+          notificationCount,
+        });
+
       return {
         message: 'notification deleted successfully',
       };
