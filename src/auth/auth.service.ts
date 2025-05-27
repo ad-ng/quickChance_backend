@@ -66,6 +66,14 @@ export class AuthService {
           phoneNumber: dto.phoneNumber,
         },
       });
+
+      await this.prisma.userNotification.create({
+        data: {
+          notificationId: 1,
+          userId: newUser.id,
+        },
+      });
+
       return {
         token: await this.jwt.signAsync(newUser),
         data: newUser,
