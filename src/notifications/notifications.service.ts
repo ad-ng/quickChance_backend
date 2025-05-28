@@ -50,7 +50,6 @@ export class NotificationsService {
       where: { userId },
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return notificationCount;
   }
   catch(error) {

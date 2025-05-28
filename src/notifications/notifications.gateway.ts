@@ -21,7 +21,7 @@ export class NotificationsGateway {
   server: Server;
 
   @SubscribeMessage('joinNotification')
-  handleJoinOpportunity(
+  handleJoinNotification(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: any,
   ) {
@@ -39,7 +39,7 @@ export class NotificationsGateway {
   }
 
   @SubscribeMessage('getNotificationCount')
-  async handleGetSavedCount(
+  async handleGetNotificationCount(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: any,
   ) {
