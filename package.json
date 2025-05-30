@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "node --max-old-space-size=2048 ./node_modules/@nestjs/cli/bin/nest.js start",
+    "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "seed": "ts-node prisma/seed.ts",
@@ -38,7 +38,6 @@
     "class-validator": "^0.14.1",
     "firebase-admin": "^13.3.0",
     "google-auth-library": "^9.15.1",
-    "nestjs-twilio": "^4.4.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
