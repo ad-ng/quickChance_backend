@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -30,5 +31,10 @@ export class UserController {
   @Delete('/delete')
   deleteUser(@Req() req: Request) {
     return this.userService.deleteUser(req.user);
+  }
+
+  @Get('/admin/getall')
+  adminFetchAllUsers(@Query() query: any) {
+    return this.userService.getAllUsers(query);
   }
 }
