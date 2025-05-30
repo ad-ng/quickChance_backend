@@ -11,9 +11,11 @@ import {
 import { UserService } from './user.service';
 import { Request } from 'express';
 import { UpdateUserDTO } from './dtos';
-import { AuthGuard } from 'src/auth/guards';
+import { AuthGuard, RolesGuard } from 'src/auth/guards';
+import { RoleStatus } from '@prisma/client';
+import { Roles } from 'src/auth/decorators/role.decorator';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, RolesGuard)
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
@@ -33,6 +35,7 @@ export class UserController {
     return this.userService.deleteUser(req.user);
   }
 
+  @Roles(RoleStatus.admin)
   @Get('/admin/getall')
   adminFetchAllUsers(@Query() query: any) {
     return this.userService.getAllUsers(query);
