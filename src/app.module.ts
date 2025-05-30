@@ -10,10 +10,15 @@ import { LikeModule } from './like/like.module';
 import { SavedModule } from './saved/saved.module';
 import { CommentModule } from './comment/comment.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { TwilioModule } from 'nestjs-twilio';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, expandVariables: true }),
+    TwilioModule.forRoot({
+      accountSid: process.env.TWILIO_ACCOUNT_SID,
+      authToken: process.env.TWILIO_AUTH_TOKEN,
+    }),
     PrismaModule,
     AuthModule,
     UserModule,
