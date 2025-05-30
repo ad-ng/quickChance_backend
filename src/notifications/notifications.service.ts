@@ -9,11 +9,13 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { NotificationsGateway } from './notifications.gateway';
+import { TwilioService } from 'nestjs-twilio';
 
 @Injectable()
 export class NotificationsService {
   constructor(
     private prisma: PrismaService,
+    private readonly twilioService: TwilioService,
     @Inject(forwardRef(() => NotificationsGateway))
     private notificationGateway: NotificationsGateway,
   ) {}
@@ -125,5 +127,13 @@ export class NotificationsService {
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
+  }
+
+  async sendSMS() {
+    return this.twilioService.client.messages.create({
+      body: 'SMS Body, sent to the phone from quick chance app!',
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: '+250782013121',
+    });
   }
 }
