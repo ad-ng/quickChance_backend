@@ -22,9 +22,4 @@ export class NotificationsController {
   deleteNotification(@Param() Param: any, @Req() req: Request) {
     return this.notificationService.deleteNotification(Param, req.user);
   }
-
-  @Get('send/message')
-  async sendSms() {
-    return await this.notificationService.sendSMS();
-  }
 }
