@@ -51,6 +51,7 @@ export class OpportunityService {
           categoryId: dto.categoryId,
           userId,
           deadline: dto.deadline,
+          oppLink: dto.oppLink,
           location: dto.location,
         },
       });

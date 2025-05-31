@@ -19,6 +19,10 @@ export class CreateOppDTO {
   @IsString()
   location: string;
 
+  @IsNotEmpty()
+  @IsString()
+  oppLink: string;
+
   @IsOptional()
   @IsDateString()
   deadline: Date;
