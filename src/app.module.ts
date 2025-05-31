@@ -14,7 +14,6 @@ import { NotificationsModule } from './notifications/notifications.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, expandVariables: true }),
-
     PrismaModule,
     AuthModule,
     UserModule,
