@@ -69,6 +69,8 @@ export class UserService {
     }
   }
 
+  async adminAddUser() {}
+
   // a function to easily validate the incoming user data
   async validatedUser(user) {
     const userId: number = user.id;
