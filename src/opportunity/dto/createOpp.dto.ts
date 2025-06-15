@@ -1,5 +1,7 @@
+import { OpportunityStatus } from '@prisma/client';
 import {
   IsDateString,
+  IsEnum,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -26,6 +28,10 @@ export class CreateOppDTO {
   @IsOptional()
   @IsDateString()
   deadline: Date;
+
+  @IsOptional()
+  @IsEnum(OpportunityStatus)
+  status: OpportunityStatus;
 
   @IsNotEmpty()
   @IsInt()
