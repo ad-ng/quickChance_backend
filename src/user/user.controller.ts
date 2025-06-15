@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Post,
   Put,
   Query,
   Req,
@@ -10,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Request } from 'express';
-import { UpdateUserDTO } from './dtos';
+import { AdminAddUserDTO, UpdateUserDTO } from './dtos';
 import { AuthGuard, RolesGuard } from 'src/auth/guards';
 import { RoleStatus } from '@prisma/client';
 import { Roles } from 'src/auth/decorators/role.decorator';
@@ -39,5 +40,11 @@ export class UserController {
   @Get('/admin/getall')
   adminFetchAllUsers(@Query() query: any) {
     return this.userService.getAllUsers(query);
+  }
+
+  @Roles(RoleStatus.admin)
+  @Post('/admin/add')
+  adminAddUser(@Body() dto: AdminAddUserDTO) {
+    return this.userService.adminAddUser(dto);
   }
 }

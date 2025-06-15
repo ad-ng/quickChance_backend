@@ -1,15 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UpdateUserDTO } from './dtos';
+import { AdminAddUserDTO, UpdateUserDTO } from './dtos';
+import * as argon from 'argon2';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwt: JwtService,
+  ) {}
   async getCurrentUser(user) {
     await this.validatedUser(user);
     return {
@@ -69,7 +75,45 @@ export class UserService {
     }
   }
 
-  async adminAddUser() {}
+  async adminAddUser(dto: AdminAddUserDTO) {
+    const checkEmail = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    if (checkEmail) {
+      throw new BadRequestException('Email already exist');
+    }
+
+    const hashedPassword: string = await argon.hash('quickChance@123');
+
+    try {
+      const newUser = await this.prisma.user.create({
+        data: {
+          username: dto.username,
+          email: dto.email,
+          password: hashedPassword,
+          fullname: dto.fullname,
+          gender: dto.gender,
+          role: dto.role,
+        },
+      });
+
+      await this.prisma.userNotification.create({
+        data: {
+          notificationId: 1,
+          userId: newUser.id,
+        },
+      });
+
+      return {
+        token: await this.jwt.signAsync(newUser),
+        data: newUser,
+      };
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return error;
+    }
+  }
 
   // a function to easily validate the incoming user data
   async validatedUser(user) {
