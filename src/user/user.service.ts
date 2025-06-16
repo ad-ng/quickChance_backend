@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   BadRequestException,
@@ -111,8 +112,7 @@ export class UserService {
         data: newUser,
       };
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return error;
+      return new InternalServerErrorException({ error });
     }
   }
 
@@ -144,7 +144,6 @@ export class UserService {
         data: newUser,
       };
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return error;
     }
   }
@@ -163,6 +162,26 @@ export class UserService {
     return {
       message: 'user deleted successfully',
     };
+  }
+
+  async createPreferences(user, dto) {
+    const userId: number = user.id;
+    const currentUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!currentUser) throw new UnauthorizedException();
+
+    try {
+      const newInterest = await this.prisma.userInterests.create({
+        data: {
+          userId: userId,
+          categoryId: dto.categoryId,
+        },
+      });
+      return newInterest;
+    } catch (error) {
+      return new InternalServerErrorException({ error });
+    }
   }
 
   // a function to easily validate the incoming user data

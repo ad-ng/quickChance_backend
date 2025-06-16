@@ -10,6 +10,7 @@ import { LikeModule } from './like/like.module';
 import { SavedModule } from './saved/saved.module';
 import { CommentModule } from './comment/comment.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { InterestsModule } from './interests/interests.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     SavedModule,
     CommentModule,
     NotificationsModule,
+    InterestsModule,
   ],
   controllers: [AppController],
 })
