@@ -23,7 +23,6 @@ model User {
   password         String
   location         String?
   profileImg       String?
-  preferences      String[]
   dob              DateTime?
   role             RoleStatus         @default(user)
   opportunity      Opportunity[]
@@ -34,6 +33,7 @@ model User {
   phoneNumber      String?
   createdAt        DateTime           @default(now())
   Saved            Saved[]
+  interests        UserInterests[]
 }
 
 model Opportunity {
@@ -82,10 +82,11 @@ model UserNotification {
 }
 
 model Category {
-  id           Int            @id @default(autoincrement())
-  name         String         @unique
-  notification Notification[]
-  opportunity  Opportunity[]
+  id              Int             @id @default(autoincrement())
+  name            String          @unique
+  notification    Notification[]
+  opportunity     Opportunity[]
+  interestedUsers UserInterests[]
 }
 
 model Like {
@@ -116,6 +117,17 @@ model Saved {
   user   User        @relation(fields: [userid], references: [id], onDelete: Cascade)
 
   @@unique([oppId, userid])
+}
+
+model UserInterests {
+  id         Int @id @default(autoincrement())
+  userId     Int
+  categoryId Int
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, categoryId])
 }
 
 enum OpportunityStatus {
