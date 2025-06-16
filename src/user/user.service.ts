@@ -123,7 +123,7 @@ export class UserService {
       where: { id: userId },
     });
 
-    if (checkUser) {
+    if (!checkUser) {
       throw new NotFoundException('User not found');
     }
 
