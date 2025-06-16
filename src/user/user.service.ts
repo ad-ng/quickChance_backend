@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   BadRequestException,
@@ -111,8 +112,7 @@ export class UserService {
         data: newUser,
       };
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return error;
+      return new InternalServerErrorException({ error });
     }
   }
 
@@ -144,7 +144,6 @@ export class UserService {
         data: newUser,
       };
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return error;
     }
   }

@@ -15,7 +15,6 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "location" TEXT,
     "profileImg" TEXT,
-    "preferences" TEXT[],
     "dob" TIMESTAMP(3),
     "role" "RoleStatus" NOT NULL DEFAULT 'user',
     "verificationCode" TEXT,
@@ -103,6 +102,15 @@ CREATE TABLE "Saved" (
     CONSTRAINT "Saved_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "UserInterests" (
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "categoryId" INTEGER NOT NULL,
+
+    CONSTRAINT "UserInterests_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -117,6 +125,9 @@ CREATE UNIQUE INDEX "Like_oppId_userid_key" ON "Like"("oppId", "userid");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Saved_oppId_userid_key" ON "Saved"("oppId", "userid");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "UserInterests_userId_categoryId_key" ON "UserInterests"("userId", "categoryId");
 
 -- AddForeignKey
 ALTER TABLE "Opportunity" ADD CONSTRAINT "Opportunity_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -153,3 +164,9 @@ ALTER TABLE "Saved" ADD CONSTRAINT "Saved_oppId_fkey" FOREIGN KEY ("oppId") REFE
 
 -- AddForeignKey
 ALTER TABLE "Saved" ADD CONSTRAINT "Saved_userid_fkey" FOREIGN KEY ("userid") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserInterests" ADD CONSTRAINT "UserInterests_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserInterests" ADD CONSTRAINT "UserInterests_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
