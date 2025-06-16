@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { InterestsService } from './interests.service';
 import { AuthGuard } from 'src/auth/guards';
 import { Request } from 'express';
@@ -16,5 +24,10 @@ export class InterestsController {
   @Post()
   addInterests(@Req() req: Request, @Body() dto: any) {
     return this.interestService.createPreferences(req.user, dto);
+  }
+
+  @Delete()
+  deleteInterest(@Req() req: Request, @Body() dto: any) {
+    return this.interestService.deletePreferences(req.user, dto);
   }
 }

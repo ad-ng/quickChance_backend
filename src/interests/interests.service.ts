@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -19,13 +19,13 @@ export class InterestsService {
     if (!currentUser) throw new UnauthorizedException();
 
     try {
-      const newInterest = await this.prisma.userInterests.create({
+      await this.prisma.userInterests.create({
         data: {
           userId: userId,
           categoryId: dto.categoryId,
         },
       });
-      return newInterest;
+      return { message: 'interest added successfully' };
     } catch (error) {
       return new InternalServerErrorException({ error });
     }
@@ -43,8 +43,43 @@ export class InterestsService {
         where: { userId },
       });
       return {
-        message: 'Interest fetched successfully',
+        message: 'Interest fetched',
         data: allInterest,
+      };
+    } catch (error) {
+      return new InternalServerErrorException({ error });
+    }
+  }
+
+  async deletePreferences(user, dto) {
+    const userId: number = user.id;
+    const currentUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!currentUser) throw new UnauthorizedException();
+
+    const checkPreferences = await this.prisma.userInterests.findUnique({
+      where: {
+        userId_categoryId: {
+          userId: userId,
+          categoryId: dto.categoryId,
+        },
+      },
+    });
+
+    if (!checkPreferences) throw new NotFoundException('interest not found');
+
+    try {
+      await this.prisma.userInterests.delete({
+        where: {
+          userId_categoryId: {
+            userId: userId,
+            categoryId: dto.categoryId,
+          },
+        },
+      });
+      return {
+        message: 'interest deleted successfully',
       };
     } catch (error) {
       return new InternalServerErrorException({ error });
