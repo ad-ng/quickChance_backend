@@ -1,15 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UpdateUserDTO } from './dtos';
+import { AdminAddUserDTO, UpdateUserDTO } from './dtos';
+import * as argon from 'argon2';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwt: JwtService,
+  ) {}
   async getCurrentUser(user) {
     await this.validatedUser(user);
     return {
@@ -67,6 +74,95 @@ export class UserService {
     } catch (error) {
       throw new InternalServerErrorException(`error: ${error}`);
     }
+  }
+
+  async adminAddUser(dto: AdminAddUserDTO) {
+    const checkEmail = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    if (checkEmail) {
+      throw new BadRequestException('Email already exist');
+    }
+
+    const hashedPassword: string = await argon.hash('quickChance@123');
+
+    try {
+      const newUser = await this.prisma.user.create({
+        data: {
+          username: dto.username,
+          email: dto.email,
+          password: hashedPassword,
+          fullname: dto.fullname,
+          gender: dto.gender,
+          role: dto.role,
+        },
+      });
+
+      await this.prisma.userNotification.create({
+        data: {
+          notificationId: 1,
+          userId: newUser.id,
+        },
+      });
+
+      return {
+        message: 'user created successfully',
+        data: newUser,
+      };
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return error;
+    }
+  }
+
+  async adminUpdateUser(dto: AdminAddUserDTO, params) {
+    const userId = parseInt(params.id, 10);
+
+    const checkUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (checkUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    try {
+      const newUser = await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          username: dto.username,
+          email: dto.email,
+          fullname: dto.fullname,
+          gender: dto.gender,
+          role: dto.role,
+        },
+      });
+
+      return {
+        message: 'User updated successfully',
+        data: newUser,
+      };
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return error;
+    }
+  }
+
+  async adminDeleteUser(params) {
+    const userId: number = parseInt(params.id, 10);
+
+    const checkUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!checkUser) throw new NotFoundException('user not found');
+
+    await this.prisma.user.delete({ where: { id: userId } });
+
+    return {
+      message: 'user deleted successfully',
+    };
   }
 
   // a function to easily validate the incoming user data
