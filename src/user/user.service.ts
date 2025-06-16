@@ -3,6 +3,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -106,7 +107,40 @@ export class UserService {
       });
 
       return {
-        token: await this.jwt.signAsync(newUser),
+        message: 'user created successfully',
+        data: newUser,
+      };
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return error;
+    }
+  }
+
+  async adminUpdateUser(dto: AdminAddUserDTO, params) {
+    const userId = parseInt(params.id, 10);
+
+    const checkUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (checkUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    try {
+      const newUser = await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          username: dto.username,
+          email: dto.email,
+          fullname: dto.fullname,
+          gender: dto.gender,
+          role: dto.role,
+        },
+      });
+
+      return {
+        message: 'User updated successfully',
         data: newUser,
       };
     } catch (error) {

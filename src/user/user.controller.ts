@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -46,5 +48,11 @@ export class UserController {
   @Post('/admin/add')
   adminAddUser(@Body() dto: AdminAddUserDTO) {
     return this.userService.adminAddUser(dto);
+  }
+
+  @Roles(RoleStatus.admin)
+  @Patch('/admin/:id')
+  adminUpdateUser(@Body() dto: AdminAddUserDTO, @Param() param: any) {
+    return this.userService.adminUpdateUser(dto, param);
   }
 }
