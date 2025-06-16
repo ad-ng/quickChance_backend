@@ -30,4 +30,24 @@ export class InterestsService {
       return new InternalServerErrorException({ error });
     }
   }
+
+  async getAllPreferences(user) {
+    const userId: number = user.id;
+    const currentUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!currentUser) throw new UnauthorizedException();
+
+    try {
+      const allInterest = await this.prisma.userInterests.findMany({
+        where: { userId },
+      });
+      return {
+        message: 'Interest fetched successfully',
+        data: allInterest,
+      };
+    } catch (error) {
+      return new InternalServerErrorException({ error });
+    }
+  }
 }
