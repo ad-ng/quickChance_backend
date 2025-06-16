@@ -44,13 +44,13 @@ model Opportunity {
   deadline     DateTime?
   userId       Int
   oppLink      String?
-  user         User              @relation(fields: [userId], references: [id])
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   notification Notification[]
   like         Like[]
   comment      Comment[]
   saved        Saved[]
   categoryId   Int?
-  category     Category?         @relation(fields: [categoryId], references: [id])
+  category     Category?         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   status       OpportunityStatus @default(open)
   updatedAt    DateTime          @updatedAt
   createdAt    DateTime          @default(now())
@@ -59,9 +59,9 @@ model Opportunity {
 model Notification {
   id                Int                @id @default(autoincrement())
   opportunityId     Int?
-  opportunity       Opportunity?       @relation(fields: [opportunityId], references: [id])
+  opportunity       Opportunity?       @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
   categoryId        Int?
-  category          Category?          @relation(fields: [categoryId], references: [id])
+  category          Category?          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   title             String
   body              String
   userNotifications UserNotification[]
@@ -70,9 +70,9 @@ model Notification {
 
 model UserNotification {
   id             Int          @id @default(autoincrement())
-  user           User         @relation(fields: [userId], references: [id])
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         Int
-  notification   Notification @relation(fields: [notificationId], references: [id])
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
   notificationId Int
   isRead         Boolean      @default(false)
   isLocalSent    Boolean      @default(false)
@@ -91,9 +91,9 @@ model Category {
 model Like {
   id     Int         @id @default(autoincrement())
   oppId  Int
-  opp    Opportunity @relation(fields: [oppId], references: [id])
+  opp    Opportunity @relation(fields: [oppId], references: [id], onDelete: Cascade)
   userid Int
-  user   User        @relation(fields: [userid], references: [id])
+  user   User        @relation(fields: [userid], references: [id], onDelete: Cascade)
 
   @@unique([oppId, userid])
 }
@@ -102,18 +102,18 @@ model Comment {
   id        Int         @id @default(autoincrement())
   oppId     Int
   body      String
-  opp       Opportunity @relation(fields: [oppId], references: [id])
+  opp       Opportunity @relation(fields: [oppId], references: [id], onDelete: Cascade)
   userid    Int
-  user      User        @relation(fields: [userid], references: [id])
+  user      User        @relation(fields: [userid], references: [id], onDelete: Cascade)
   createdAt DateTime    @default(now())
 }
 
 model Saved {
   id     Int         @id @default(autoincrement())
   oppId  Int
-  opp    Opportunity @relation(fields: [oppId], references: [id])
+  opp    Opportunity @relation(fields: [oppId], references: [id], onDelete: Cascade)
   userid Int
-  user   User        @relation(fields: [userid], references: [id])
+  user   User        @relation(fields: [userid], references: [id], onDelete: Cascade)
 
   @@unique([oppId, userid])
 }
