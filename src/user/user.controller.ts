@@ -55,4 +55,10 @@ export class UserController {
   adminUpdateUser(@Body() dto: AdminAddUserDTO, @Param() param: any) {
     return this.userService.adminUpdateUser(dto, param);
   }
+
+  @Roles(RoleStatus.admin)
+  @Delete('/admin/:id')
+  adminDeleteUser(@Param() param: any) {
+    return this.userService.adminDeleteUser(param);
+  }
 }

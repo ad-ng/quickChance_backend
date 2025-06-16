@@ -149,6 +149,22 @@ export class UserService {
     }
   }
 
+  async adminDeleteUser(params) {
+    const userId: number = parseInt(params.id, 10);
+
+    const checkUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!checkUser) throw new NotFoundException('user not found');
+
+    await this.prisma.user.delete({ where: { id: userId } });
+
+    return {
+      message: 'user deleted successfully',
+    };
+  }
+
   // a function to easily validate the incoming user data
   async validatedUser(user) {
     const userId: number = user.id;
