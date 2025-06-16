@@ -1,4 +1,15 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { InterestsService } from './interests.service';
+import { AuthGuard } from 'src/auth/guards';
+import { Request } from 'express';
 
+@UseGuards(AuthGuard)
 @Controller('interests')
-export class InterestsController {}
+export class InterestsController {
+  constructor(private interestService: InterestsService) {}
+
+  @Post()
+  addInterests(@Req() req: Request, @Body() dto: any) {
+    return this.interestService.createPreferences(req.user, dto);
+  }
+}

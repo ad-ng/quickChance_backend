@@ -164,26 +164,6 @@ export class UserService {
     };
   }
 
-  async createPreferences(user, dto) {
-    const userId: number = user.id;
-    const currentUser = await this.prisma.user.findUnique({
-      where: { id: userId },
-    });
-    if (!currentUser) throw new UnauthorizedException();
-
-    try {
-      const newInterest = await this.prisma.userInterests.create({
-        data: {
-          userId: userId,
-          categoryId: dto.categoryId,
-        },
-      });
-      return newInterest;
-    } catch (error) {
-      return new InternalServerErrorException({ error });
-    }
-  }
-
   // a function to easily validate the incoming user data
   async validatedUser(user) {
     const userId: number = user.id;
