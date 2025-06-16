@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import {
-  IsEmail,
-  IsEmpty,
-  IsEnum,
-  IsNotEmpty,
-  IsString,
-} from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { RoleStatus } from '@prisma/client';
 
@@ -24,7 +18,7 @@ export class AdminAddUserDTO {
   email: string;
 
   @IsString()
-  @IsEmpty()
+  @IsNotEmpty()
   gender: string;
 
   @IsString()
