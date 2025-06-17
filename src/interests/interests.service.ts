@@ -41,6 +41,7 @@ export class InterestsService {
     try {
       const allInterest = await this.prisma.userInterests.findMany({
         where: { userId },
+        include: { category: true },
       });
       return {
         message: 'Interest fetched',
