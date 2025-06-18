@@ -77,11 +77,15 @@ export class AuthService {
 
       const allCategories = await this.prisma.category.findMany();
 
-      allCategories.map((category) =>
-        this.prisma.userInterests.create({
-          data: { categoryId: category.id, userId: newUser.id },
-        }),
-      );
+      const interestsData = allCategories.map((category) => ({
+        categoryId: category.id,
+        userId: newUser.id,
+      }));
+
+      await this.prisma.userInterests.createMany({
+        data: interestsData,
+        skipDuplicates: true,
+      });
 
       return {
         token: await this.jwt.signAsync(newUser),
@@ -144,11 +148,15 @@ export class AuthService {
 
       const allCategories = await this.prisma.category.findMany();
 
-      allCategories.map((category) =>
-        this.prisma.userInterests.create({
-          data: { categoryId: category.id, userId: currentUser.id },
-        }),
-      );
+      const interestsData = allCategories.map((category) => ({
+        categoryId: category.id,
+        userId: currentUser.id,
+      }));
+
+      await this.prisma.userInterests.createMany({
+        data: interestsData,
+        skipDuplicates: true,
+      });
     }
     return {
       token: await this.jwt.signAsync(currentUser),
