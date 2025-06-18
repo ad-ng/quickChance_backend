@@ -7,10 +7,16 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateOppDTO } from './dto/createOpp.dto';
 import { OpportunityStatus } from '@prisma/client';
+import { NotificationsGateway } from 'src/notifications/notifications.gateway';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class OpportunityService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationGateway: NotificationsGateway,
+    private notificationService: NotificationsService,
+  ) {}
 
   async fetchAllOpportunity() {
     const allOpportunity = await this.prisma.opportunity.findMany({
@@ -55,6 +61,84 @@ export class OpportunityService {
           location: dto.location,
         },
       });
+
+      // const interestedUsers = await this.prisma.user.findMany({
+      //   where: {
+      //     interests: {
+      //       some: {
+      //         categoryId: dto.categoryId,
+      //       },
+      //     },
+      //   },
+      // });
+
+      // const newNotification = await this.prisma.notification.create({
+      //   data: {
+      //     title: 'New opportunity have been added',
+      //     body: newOpp.title,
+      //     categoryId: newOpp.categoryId,
+      //   },
+      // });
+
+      // const notificationData = interestedUsers.map((user) => ({
+      //   isLocalSent: false,
+      //   isRead: false,
+      //   notificationId: newNotification.id,
+      //   userId: user.id,
+      // }));
+
+      // await this.prisma.userNotification.createMany({
+      //   data: notificationData,
+      //   skipDuplicates: true,
+      // });
+
+      (async () => {
+        try {
+          const interestedUsers = await this.prisma.user.findMany({
+            where: {
+              interests: {
+                some: {
+                  categoryId: dto.categoryId,
+                },
+              },
+            },
+          });
+
+          const newNotification = await this.prisma.notification.create({
+            data: {
+              title: 'New opportunity have been added',
+              body: newOpp.title,
+              categoryId: newOpp.categoryId,
+            },
+          });
+
+          const notificationData = interestedUsers.map((user) => ({
+            isLocalSent: false,
+            isRead: false,
+            notificationId: newNotification.id,
+            userId: user.id,
+          }));
+
+          await this.prisma.userNotification.createMany({
+            data: notificationData,
+            skipDuplicates: true,
+          });
+
+          // Fetch notification count from DB
+          const notificationCount =
+            await this.notificationService.countAllNot(userId);
+
+          // Reply back to the client
+          this.notificationGateway.server
+            .to(user.email)
+            .emit('countNotificationReply', {
+              userId,
+              notificationCount,
+            });
+        } catch (e) {
+          console.error('Failed to send notifications:', e);
+        }
+      })();
 
       return {
         message: 'Opportunity Created Successfully !',
