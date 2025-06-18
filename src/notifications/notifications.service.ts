@@ -34,7 +34,7 @@ export class NotificationsService {
         include: {
           notification: {
             include: {
-              opportunity: true,
+              opportunity: { include: { user: true, category: true } },
             },
           },
         },
