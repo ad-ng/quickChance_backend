@@ -29,7 +29,7 @@ export class NotificationsService {
     try {
       const allNotifications = await this.prisma.userNotification.findMany({
         where: { userId },
-        include: { notification: true },
+        include: { notification: { include: { opportunity: true } } },
       });
       return {
         message: 'notifications fetched successfully',
