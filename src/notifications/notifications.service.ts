@@ -30,11 +30,6 @@ export class NotificationsService {
       const allNotifications = await this.prisma.userNotification.findMany({
         where: {
           userId,
-          notification: {
-            opportunityId: {
-              not: null,
-            },
-          },
         },
         include: {
           notification: {
