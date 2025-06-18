@@ -108,6 +108,7 @@ export class OpportunityService {
             data: {
               title: 'New opportunity have been added',
               body: newOpp.title,
+              opportunityId: newOpp.id,
               categoryId: newOpp.categoryId,
             },
           });
