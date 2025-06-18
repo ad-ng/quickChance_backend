@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   BadRequestException,
@@ -74,12 +75,19 @@ export class AuthService {
         },
       });
 
+      const allCategories = await this.prisma.category.findMany();
+
+      allCategories.map((category) =>
+        this.prisma.userInterests.create({
+          data: { categoryId: category.id, userId: newUser.id },
+        }),
+      );
+
       return {
         token: await this.jwt.signAsync(newUser),
         data: newUser,
       };
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return error;
     }
   }
@@ -133,6 +141,14 @@ export class AuthService {
           userId: currentUser.id,
         },
       });
+
+      const allCategories = await this.prisma.category.findMany();
+
+      allCategories.map((category) =>
+        this.prisma.userInterests.create({
+          data: { categoryId: category.id, userId: currentUser.id },
+        }),
+      );
     }
     return {
       token: await this.jwt.signAsync(currentUser),
