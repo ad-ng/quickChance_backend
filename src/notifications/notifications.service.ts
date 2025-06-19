@@ -135,4 +135,36 @@ export class NotificationsService {
       throw new InternalServerErrorException(error);
     }
   }
+
+  async fetchAllUnreadNotifications(user) {
+    const userId: number = user.id;
+    const checkUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!checkUser) throw new UnauthorizedException();
+
+    try {
+      const allNotifications = await this.prisma.userNotification.findMany({
+        where: {
+          userId,
+          isLocalSent: false,
+        },
+        include: {
+          notification: {
+            include: {
+              opportunity: { include: { user: true, category: true } },
+            },
+          },
+        },
+      });
+
+      return {
+        message: 'notifications fetched successfully',
+        data: allNotifications,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 }
