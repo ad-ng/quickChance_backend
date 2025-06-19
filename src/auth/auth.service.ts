@@ -72,6 +72,8 @@ export class AuthService {
         data: {
           notificationId: 1,
           userId: newUser.id,
+          isLocalSent: false,
+          isRead: false,
         },
       });
 
@@ -143,6 +145,8 @@ export class AuthService {
         data: {
           notificationId: 1,
           userId: currentUser.id,
+          isLocalSent: false,
+          isRead: false,
         },
       });
 
