@@ -56,7 +56,7 @@ export class NotificationsService {
     if (!checkUser) throw new UnauthorizedException();
 
     const notificationCount = await this.prisma.userNotification.count({
-      where: { userId },
+      where: { userId, isRead: true },
     });
 
     return notificationCount;
@@ -76,7 +76,7 @@ export class NotificationsService {
     try {
       await this.prisma.userNotification.update({
         where: { id: notId },
-        data: { isRead: false },
+        data: { isRead: true },
       });
 
       // Fetch notification count from DB
