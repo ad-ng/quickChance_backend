@@ -76,7 +76,7 @@ export class NotificationsService {
     try {
       await this.prisma.userNotification.update({
         where: { id: notId },
-        data: { isRead: true },
+        data: { isRead: false },
       });
 
       // Fetch notification count from DB
