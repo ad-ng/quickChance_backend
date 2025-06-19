@@ -160,8 +160,30 @@ export class NotificationsService {
       });
 
       return {
-        message: 'notifications fetched successfully',
+        message: 'unread notifications fetched successfully',
         data: allNotifications,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async updatingIsLocalNotificationSent(params, req) {
+    const userId: number = req.id;
+    const notId = parseInt(params['id'], 10);
+    const checkNot = await this.prisma.userNotification.findUnique({
+      where: { id: notId, userId },
+    });
+    if (!checkNot) throw new NotFoundException();
+
+    try {
+      await this.prisma.userNotification.update({
+        where: { id: notId },
+        data: { isLocalSent: true },
+      });
+
+      return {
+        message: 'isLocalSent updated successfully',
       };
     } catch (error) {
       throw new InternalServerErrorException(error);
