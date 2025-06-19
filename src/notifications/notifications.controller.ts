@@ -27,4 +27,12 @@ export class NotificationsController {
   fetchUnreadNotifications(@Req() req: Request) {
     return this.notificationService.fetchAllUnreadNotifications(req.user);
   }
+
+  @Get('islocalsent/:id')
+  isLocalNotification(@Param() Param: any, @Req() req: Request) {
+    return this.notificationService.updatingIsLocalNotificationSent(
+      Param,
+      req.user,
+    );
+  }
 }
